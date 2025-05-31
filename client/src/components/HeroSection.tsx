@@ -26,7 +26,6 @@ export default function HeroSection() {
           backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/images/cuca-hero.jpg')`,
         }}
       />
-
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.h1
           initial={{ opacity: 0, y: 50 }}
@@ -50,7 +49,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-lg sm:text-xl text-cuca-white/90 mb-12 max-w-2xl mx-auto leading-relaxed"
+          className="text-lg sm:text-xl mb-12 max-w-2xl mx-auto leading-relaxed text-[#ffd900]"
         >
           A cerveja que une Angola há gerações. Sabor autêntico, tradição
           genuína, orgulho nacional.
@@ -77,7 +76,6 @@ export default function HeroSection() {
           </Button>
         </motion.div>
       </div>
-
       {/* Scroll Indicator */}
       <motion.div
         initial={{ opacity: 0 }}
