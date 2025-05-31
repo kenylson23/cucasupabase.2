@@ -54,7 +54,22 @@ export default function ContactSection() {
     setIsSubmitting(true);
 
     try {
-      await apiRequest("POST", "/api/contact", formData);
+      // Para deployment no Netlify, use Netlify Forms
+      if (typeof window !== "undefined" && window.location.hostname.includes("netlify")) {
+        // Submit via Netlify Forms
+        const formElement = e.target as HTMLFormElement;
+        const netlifyData = new FormData(formElement);
+        
+        await fetch("/", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams(netlifyData as any).toString()
+        });
+      } else {
+        // Submit via API quando rodando localmente
+        await apiRequest("POST", "/api/contact", formData);
+      }
+      
       toast({
         title: "Mensagem enviada!",
         description: "Obrigado pela sua mensagem! Entraremos em contato em breve.",
@@ -154,7 +169,8 @@ export default function ContactSection() {
               Envie uma Mensagem
             </h3>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6" name="contact" data-netlify="true">
+              <input type="hidden" name="form-name" value="contact" />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="name" className="block text-sm font-medium text-cuca-black mb-2">
