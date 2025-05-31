@@ -38,8 +38,15 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
-            <div className="text-3xl font-montserrat font-bold text-cuca-yellow mb-4">
-              CUCA
+            <div className="flex items-center mb-4">
+              <img 
+                src="/images/cuca-logo.png" 
+                alt="CUCA Logo" 
+                className="h-12 w-auto mr-3"
+              />
+              <div className="text-3xl font-montserrat font-bold text-cuca-yellow">
+                CUCA
+              </div>
             </div>
             <p className="text-gray-300 mb-4 leading-relaxed">
               Em Angola, cerveja é CUCA. Há mais de 50 anos levando qualidade,
