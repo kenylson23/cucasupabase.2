@@ -1,6 +1,6 @@
 [build]
-  publish = "client/dist"
-  command = "cd client && npx vite build"
+  publish = "dist/public"
+  command = "vite build"
 
 [[redirects]]
   from = "/*"
