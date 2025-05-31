@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link, useLocation } from "wouter";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [location] = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -49,12 +51,11 @@ export default function Navigation() {
           {/* Desktop Menu */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
-              <button
-                onClick={() => scrollToSection("home")}
-                className="text-cuca-black hover:text-cuca-yellow transition-colors duration-300 font-medium"
-              >
-                Início
-              </button>
+              <Link href="/">
+                <span className="text-cuca-black hover:text-cuca-yellow transition-colors duration-300 font-medium cursor-pointer">
+                  Início
+                </span>
+              </Link>
               <button
                 onClick={() => scrollToSection("products")}
                 className="text-cuca-black hover:text-cuca-yellow transition-colors duration-300 font-medium"
@@ -67,6 +68,11 @@ export default function Navigation() {
               >
                 Nossa História
               </button>
+              <Link href="/pontos-venda">
+                <span className="text-cuca-black hover:text-cuca-yellow transition-colors duration-300 font-medium cursor-pointer">
+                  Pontos de Venda
+                </span>
+              </Link>
               <button
                 onClick={() => scrollToSection("contact")}
                 className="text-cuca-black hover:text-cuca-yellow transition-colors duration-300 font-medium"
@@ -94,12 +100,14 @@ export default function Navigation() {
       {isOpen && (
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 bg-cuca-white border-t">
-            <button
-              onClick={() => scrollToSection("home")}
-              className="block w-full text-left px-3 py-2 text-cuca-black hover:text-cuca-yellow transition-colors"
-            >
-              Início
-            </button>
+            <Link href="/">
+              <span 
+                onClick={() => setIsOpen(false)}
+                className="block w-full text-left px-3 py-2 text-cuca-black hover:text-cuca-yellow transition-colors cursor-pointer"
+              >
+                Início
+              </span>
+            </Link>
             <button
               onClick={() => scrollToSection("products")}
               className="block w-full text-left px-3 py-2 text-cuca-black hover:text-cuca-yellow transition-colors"
@@ -112,6 +120,14 @@ export default function Navigation() {
             >
               Nossa História
             </button>
+            <Link href="/pontos-venda">
+              <span 
+                onClick={() => setIsOpen(false)}
+                className="block w-full text-left px-3 py-2 text-cuca-black hover:text-cuca-yellow transition-colors cursor-pointer"
+              >
+                Pontos de Venda
+              </span>
+            </Link>
             <button
               onClick={() => scrollToSection("contact")}
               className="block w-full text-left px-3 py-2 text-cuca-black hover:text-cuca-yellow transition-colors"
