@@ -1,12 +1,35 @@
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [location] = useLocation();
+
+  useEffect(() => {
+    // Check for saved theme preference or default to 'light'
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
+
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    if (newMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,14 +53,23 @@ export default function Navigation() {
   };
 
   return (
-    <nav
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5 }}
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled ? "bg-cuca-white shadow-lg" : "bg-cuca-white/95 backdrop-blur-md"
+        isScrolled 
+          ? "bg-background shadow-lg dark:bg-background/95" 
+          : "bg-background/95 backdrop-blur-md dark:bg-background/80"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex-shrink-0 flex items-center">
+          <motion.div 
+            className="flex-shrink-0 flex items-center"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          >
             <img 
               src="/images/cuca-logo.png" 
               alt="CUCA Logo" 
@@ -46,97 +78,164 @@ export default function Navigation() {
             <span className="text-2xl font-montserrat font-bold text-cuca-yellow">
               CUCA
             </span>
-          </div>
+          </motion.div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
+          <div className="hidden md:flex items-center space-x-8">
+            <div className="flex items-baseline space-x-8">
               <Link href="/">
-                <span className="text-cuca-black hover:text-cuca-yellow transition-colors duration-300 font-medium cursor-pointer">
+                <motion.span 
+                  className="text-foreground hover:text-cuca-yellow transition-colors duration-300 font-medium cursor-pointer"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
                   Início
-                </span>
+                </motion.span>
               </Link>
-              <button
+              <motion.button
                 onClick={() => scrollToSection("products")}
-                className="text-cuca-black hover:text-cuca-yellow transition-colors duration-300 font-medium"
+                className="text-foreground hover:text-cuca-yellow transition-colors duration-300 font-medium"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 Produtos
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 onClick={() => scrollToSection("heritage")}
-                className="text-cuca-black hover:text-cuca-yellow transition-colors duration-300 font-medium"
+                className="text-foreground hover:text-cuca-yellow transition-colors duration-300 font-medium"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 Nossa História
-              </button>
+              </motion.button>
               <Link href="/pontos-venda">
-                <span className="text-cuca-black hover:text-cuca-yellow transition-colors duration-300 font-medium cursor-pointer">
+                <motion.span 
+                  className="text-foreground hover:text-cuca-yellow transition-colors duration-300 font-medium cursor-pointer"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
                   Pontos de Venda
-                </span>
+                </motion.span>
               </Link>
-              <button
+              <motion.button
                 onClick={() => scrollToSection("contact")}
-                className="text-cuca-black hover:text-cuca-yellow transition-colors duration-300 font-medium"
+                className="text-foreground hover:text-cuca-yellow transition-colors duration-300 font-medium"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 Contato
-              </button>
+              </motion.button>
             </div>
+            
+            {/* Dark Mode Toggle */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleDarkMode}
+                className="text-foreground hover:text-cuca-yellow"
+              >
+                {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </Button>
+            </motion.div>
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-cuca-black hover:text-cuca-yellow"
+          <div className="md:hidden flex items-center space-x-2">
+            {/* Dark Mode Toggle for Mobile */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleDarkMode}
+                className="text-foreground hover:text-cuca-yellow"
+              >
+                {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </Button>
+            </motion.div>
+            
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsOpen(!isOpen)}
+                className="text-foreground hover:text-cuca-yellow"
+              >
+                {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </Button>
+            </motion.div>
           </div>
         </div>
       </div>
 
       {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 bg-cuca-white border-t">
-            <Link href="/">
-              <span 
-                onClick={() => setIsOpen(false)}
-                className="block w-full text-left px-3 py-2 text-cuca-black hover:text-cuca-yellow transition-colors cursor-pointer"
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div 
+            className="md:hidden"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="px-2 pt-2 pb-3 space-y-1 bg-background border-t dark:border-border">
+              <Link href="/">
+                <motion.span 
+                  onClick={() => setIsOpen(false)}
+                  className="block w-full text-left px-3 py-2 text-foreground hover:text-cuca-yellow transition-colors cursor-pointer"
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Início
+                </motion.span>
+              </Link>
+              <motion.button
+                onClick={() => scrollToSection("products")}
+                className="block w-full text-left px-3 py-2 text-foreground hover:text-cuca-yellow transition-colors"
+                whileHover={{ x: 5 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Início
-              </span>
-            </Link>
-            <button
-              onClick={() => scrollToSection("products")}
-              className="block w-full text-left px-3 py-2 text-cuca-black hover:text-cuca-yellow transition-colors"
-            >
-              Produtos
-            </button>
-            <button
-              onClick={() => scrollToSection("heritage")}
-              className="block w-full text-left px-3 py-2 text-cuca-black hover:text-cuca-yellow transition-colors"
-            >
-              Nossa História
-            </button>
-            <Link href="/pontos-venda">
-              <span 
-                onClick={() => setIsOpen(false)}
-                className="block w-full text-left px-3 py-2 text-cuca-black hover:text-cuca-yellow transition-colors cursor-pointer"
+                Produtos
+              </motion.button>
+              <motion.button
+                onClick={() => scrollToSection("heritage")}
+                className="block w-full text-left px-3 py-2 text-foreground hover:text-cuca-yellow transition-colors"
+                whileHover={{ x: 5 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Pontos de Venda
-              </span>
-            </Link>
-            <button
-              onClick={() => scrollToSection("contact")}
-              className="block w-full text-left px-3 py-2 text-cuca-black hover:text-cuca-yellow transition-colors"
-            >
-              Contato
-            </button>
-          </div>
-        </div>
-      )}
-    </nav>
+                Nossa História
+              </motion.button>
+              <Link href="/pontos-venda">
+                <motion.span 
+                  onClick={() => setIsOpen(false)}
+                  className="block w-full text-left px-3 py-2 text-foreground hover:text-cuca-yellow transition-colors cursor-pointer"
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Pontos de Venda
+                </motion.span>
+              </Link>
+              <motion.button
+                onClick={() => scrollToSection("contact")}
+                className="block w-full text-left px-3 py-2 text-foreground hover:text-cuca-yellow transition-colors"
+                whileHover={{ x: 5 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Contato
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.nav>
   );
 }
