@@ -2,25 +2,26 @@ import { motion } from "framer-motion";
 import { Award, Leaf, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import cucaImagePath from "@assets/Se somos Cuca, somos união, somos 73 anos com a melhor da banda!Marca o teu kamba que vai celebrar contigo, antes que a semana termine.#SomosCuca #SaborDaUnião #Cuca73Anos.jpg";
 
 const products = [
   {
     name: "CUCA Original",
     description: "Nossa receita clássica, com sabor equilibrado e refrescante que conquistou Angola",
     alcohol: "5.0% álcool",
-    image: "https://images.unsplash.com/photo-1608270586620-248524c67de9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+    image: cucaImagePath,
   },
   {
     name: "CUCA Premium",
     description: "Edição especial com ingredientes selecionados para paladares exigentes",
     alcohol: "5.5% álcool",
-    image: "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+    image: cucaImagePath,
   },
   {
     name: "CUCA Light",
     description: "Versão leve com menos calorias, mantendo todo o sabor tradicional",
     alcohol: "3.5% álcool",
-    image: "https://images.unsplash.com/photo-1569529465841-dfecdab7503b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+    image: cucaImagePath,
   },
 ];
 
