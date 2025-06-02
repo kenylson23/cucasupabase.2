@@ -46,21 +46,39 @@ export default function CTASection() {
           viewport={{ once: true }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
-          <Button
-            onClick={() => scrollToSection("contact")}
-            className="bg-cuca-white text-cuca-red font-montserrat font-semibold px-8 py-4 text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg"
+          <motion.div
+            whileHover={{ 
+              scale: 1.02,
+              boxShadow: "0 15px 30px rgba(0, 0, 0, 0.15)"
+            }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
-            <MapPin className="mr-2 h-5 w-5" />
-            Encontre CUCA Perto de Você
-          </Button>
-          <Button
-            onClick={() => scrollToSection("contact")}
-            variant="outline"
-            className="border-2 border-cuca-white text-cuca-white hover:bg-cuca-white hover:text-cuca-red font-montserrat font-semibold px-8 py-4 text-lg transition-all duration-300 transform hover:scale-105"
+            <Button
+              onClick={() => scrollToSection("contact")}
+              className="bg-cuca-white text-cuca-red font-montserrat font-semibold px-8 py-4 text-lg hover:bg-gray-100 transition-colors duration-200 shadow-lg"
+            >
+              <MapPin className="mr-2 h-5 w-5" />
+              Encontre CUCA Perto de Você
+            </Button>
+          </motion.div>
+          <motion.div
+            whileHover={{ 
+              scale: 1.02,
+              boxShadow: "0 10px 25px rgba(255, 255, 255, 0.2)"
+            }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
-            <Phone className="mr-2 h-5 w-5" />
-            Entre em Contato
-          </Button>
+            <Button
+              onClick={() => scrollToSection("contact")}
+              variant="outline"
+              className="border-2 border-cuca-white text-cuca-white hover:bg-cuca-white hover:text-cuca-red font-montserrat font-semibold px-8 py-4 text-lg transition-colors duration-200"
+            >
+              <Phone className="mr-2 h-5 w-5" />
+              Entre em Contato
+            </Button>
+          </motion.div>
         </motion.div>
       </div>
     </section>
