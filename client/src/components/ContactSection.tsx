@@ -152,19 +152,25 @@ export default function ContactSection() {
             </div>
 
             {/* Social Media */}
-            <div className="mt-8">
-              <h4 className="font-montserrat font-semibold text-xl text-cuca-black mb-4">
+            <div className="mt-6 sm:mt-8">
+              <h4 className="font-montserrat font-semibold text-lg sm:text-xl text-foreground mb-4">
                 Siga-nos
               </h4>
-              <div className="flex space-x-4">
+              <div className="flex space-x-3 sm:space-x-4">
                 {socialLinks.map((social, index) => (
-                  <a
+                  <motion.a
                     key={index}
                     href={social.href}
-                    className={`bg-cuca-yellow text-cuca-black w-12 h-12 rounded-lg flex items-center justify-center ${social.color} hover:text-white transition-colors`}
+                    className="bg-cuca-yellow text-cuca-black w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center hover:bg-cuca-red hover:text-white transition-all duration-300"
+                    whileHover={{ scale: 1.1, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    viewport={{ once: true }}
                   >
-                    <social.icon className="h-5 w-5" />
-                  </a>
+                    <social.icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                  </motion.a>
                 ))}
               </div>
             </div>
@@ -177,15 +183,20 @@ export default function ContactSection() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h3 className="font-montserrat font-semibold text-2xl text-cuca-black mb-8">
+            <h3 className="font-montserrat font-semibold text-xl sm:text-2xl text-foreground mb-6 sm:mb-8">
               Envie uma Mensagem
             </h3>
 
-            <form onSubmit={handleSubmit} className="space-y-6" name="contact" data-netlify="true">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6" name="contact" data-netlify="true">
               <input type="hidden" name="form-name" value="contact" />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="name" className="block text-sm font-medium text-cuca-black mb-2">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <Label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
                     Nome
                   </Label>
                   <Input
@@ -196,11 +207,16 @@ export default function ContactSection() {
                     onChange={handleChange}
                     placeholder="Seu nome"
                     required
-                    className="focus:ring-2 focus:ring-cuca-yellow focus:border-transparent"
+                    className="focus:ring-2 focus:ring-cuca-yellow focus:border-transparent transition-all duration-300"
                   />
-                </div>
-                <div>
-                  <Label htmlFor="email" className="block text-sm font-medium text-cuca-black mb-2">
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  viewport={{ once: true }}
+                >
+                  <Label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
                     Email
                   </Label>
                   <Input
@@ -211,13 +227,18 @@ export default function ContactSection() {
                     onChange={handleChange}
                     placeholder="seu@email.com"
                     required
-                    className="focus:ring-2 focus:ring-cuca-yellow focus:border-transparent"
+                    className="focus:ring-2 focus:ring-cuca-yellow focus:border-transparent transition-all duration-300"
                   />
-                </div>
+                </motion.div>
               </div>
 
-              <div>
-                <Label htmlFor="subject" className="block text-sm font-medium text-cuca-black mb-2">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                viewport={{ once: true }}
+              >
+                <Label htmlFor="subject" className="block text-sm font-medium text-foreground mb-2">
                   Assunto
                 </Label>
                 <Input
@@ -228,12 +249,17 @@ export default function ContactSection() {
                   onChange={handleChange}
                   placeholder="Assunto da mensagem"
                   required
-                  className="focus:ring-2 focus:ring-cuca-yellow focus:border-transparent"
+                  className="focus:ring-2 focus:ring-cuca-yellow focus:border-transparent transition-all duration-300"
                 />
-              </div>
+              </motion.div>
 
-              <div>
-                <Label htmlFor="message" className="block text-sm font-medium text-cuca-black mb-2">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                viewport={{ once: true }}
+              >
+                <Label htmlFor="message" className="block text-sm font-medium text-foreground mb-2">
                   Mensagem
                 </Label>
                 <Textarea
@@ -244,17 +270,26 @@ export default function ContactSection() {
                   onChange={handleChange}
                   placeholder="Sua mensagem..."
                   required
-                  className="focus:ring-2 focus:ring-cuca-yellow focus:border-transparent"
+                  className="focus:ring-2 focus:ring-cuca-yellow focus:border-transparent transition-all duration-300 resize-none"
                 />
-              </div>
+              </motion.div>
 
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-cuca-red hover:bg-red-700 text-white font-montserrat font-semibold py-4 transition-colors duration-300 transform hover:scale-105"
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                viewport={{ once: true }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                {isSubmitting ? "Enviando..." : "Enviar Mensagem"}
-              </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-cuca-red hover:bg-red-700 text-white font-montserrat font-semibold py-3 sm:py-4 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? "Enviando..." : "Enviar Mensagem"}
+                </Button>
+              </motion.div>
             </form>
           </motion.div>
         </div>
