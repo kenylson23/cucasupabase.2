@@ -239,3 +239,5 @@ export type InsertOrderItem = z.infer<typeof insertOrderItemSchema>;
 export type OrderItem = typeof orderItems.$inferSelect;
 export type InsertAnalyticsEvent = z.infer<typeof insertAnalyticsEventSchema>;
 export type AnalyticsEvent = typeof analyticsEvents.$inferSelect;
+export type InsertFanPhoto = z.infer<typeof insertFanPhotoSchema>;
+export type FanPhoto = typeof fanPhotos.$inferSelect;

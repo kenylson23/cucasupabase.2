@@ -6,6 +6,7 @@ import {
   orderItems,
   analyticsEvents,
   adminUsers,
+  fanPhotos,
   type User,
   type InsertUser,
   type UpsertAdminUser,
@@ -20,6 +21,8 @@ import {
   type InsertOrderItem,
   type AnalyticsEvent,
   type InsertAnalyticsEvent,
+  type FanPhoto,
+  type InsertFanPhoto,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and } from "drizzle-orm";
@@ -62,6 +65,14 @@ export interface IStorage {
   // Analytics operations
   createAnalyticsEvent(event: InsertAnalyticsEvent): Promise<AnalyticsEvent>;
   getAnalyticsEvents(limit?: number): Promise<AnalyticsEvent[]>;
+  
+  // Fan Photos operations
+  createFanPhoto(photo: InsertFanPhoto): Promise<FanPhoto>;
+  getFanPhotos(): Promise<FanPhoto[]>;
+  getPendingFanPhotos(): Promise<FanPhoto[]>;
+  getApprovedFanPhotos(): Promise<FanPhoto[]>;
+  updateFanPhotoStatus(id: number, status: string, approvedBy?: string): Promise<FanPhoto>;
+  deleteFanPhoto(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -228,6 +239,62 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(analyticsEvents)
       .orderBy(desc(analyticsEvents.createdAt))
       .limit(limit);
+  }
+
+  // Fan Photos operations
+  async createFanPhoto(insertPhoto: InsertFanPhoto): Promise<FanPhoto> {
+    const [photo] = await db
+      .insert(fanPhotos)
+      .values(insertPhoto)
+      .returning();
+    return photo;
+  }
+
+  async getFanPhotos(): Promise<FanPhoto[]> {
+    return await db
+      .select()
+      .from(fanPhotos)
+      .orderBy(desc(fanPhotos.createdAt));
+  }
+
+  async getPendingFanPhotos(): Promise<FanPhoto[]> {
+    return await db
+      .select()
+      .from(fanPhotos)
+      .where(eq(fanPhotos.status, "pending"))
+      .orderBy(desc(fanPhotos.createdAt));
+  }
+
+  async getApprovedFanPhotos(): Promise<FanPhoto[]> {
+    return await db
+      .select()
+      .from(fanPhotos)
+      .where(eq(fanPhotos.status, "approved"))
+      .orderBy(desc(fanPhotos.approvedAt));
+  }
+
+  async updateFanPhotoStatus(id: number, status: string, approvedBy?: string): Promise<FanPhoto> {
+    const updateData: any = { 
+      status,
+      approvedAt: status === "approved" ? new Date() : null
+    };
+    
+    if (approvedBy) {
+      updateData.approvedBy = approvedBy;
+    }
+
+    const [photo] = await db
+      .update(fanPhotos)
+      .set(updateData)
+      .where(eq(fanPhotos.id, id))
+      .returning();
+    return photo;
+  }
+
+  async deleteFanPhoto(id: number): Promise<void> {
+    await db
+      .delete(fanPhotos)
+      .where(eq(fanPhotos.id, id));
   }
 }
 

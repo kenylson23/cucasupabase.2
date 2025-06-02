@@ -5,7 +5,8 @@ import {
   insertContactMessageSchema,
   insertProductSchema,
   insertOrderSchema,
-  insertAnalyticsEventSchema 
+  insertAnalyticsEventSchema,
+  insertFanPhotoSchema 
 } from "@shared/schema";
 import { getSimpleSession, requireAuth, loginHandler, logoutHandler, getUserHandler, registerHandler } from "./simpleAuth";
 import { seedDatabase } from "./seed";
@@ -235,6 +236,93 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching stats:", error);
       res.status(500).json({ message: "Failed to fetch stats" });
+    }
+  });
+
+  // Fan Gallery routes
+  app.post("/api/fan-gallery", async (req, res) => {
+    try {
+      const result = insertFanPhotoSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({
+          message: "Dados inválidos",
+          errors: result.error.issues,
+        });
+      }
+
+      const photo = await storage.createFanPhoto(result.data);
+      res.json({ success: true, message: "Foto enviada com sucesso! Aguardando aprovação.", photo });
+    } catch (error) {
+      console.error("Error creating fan photo:", error);
+      res.status(500).json({ message: "Erro ao enviar foto" });
+    }
+  });
+
+  app.get("/api/fan-gallery", async (req, res) => {
+    try {
+      const photos = await storage.getApprovedFanPhotos();
+      res.json(photos);
+    } catch (error) {
+      console.error("Error fetching approved photos:", error);
+      res.status(500).json({ message: "Erro ao buscar fotos" });
+    }
+  });
+
+  // Admin fan gallery routes
+  app.get("/api/admin/fan-gallery", requireAuth, async (req, res) => {
+    try {
+      const photos = await storage.getFanPhotos();
+      res.json(photos);
+    } catch (error) {
+      console.error("Error fetching all photos:", error);
+      res.status(500).json({ message: "Erro ao buscar fotos" });
+    }
+  });
+
+  app.get("/api/admin/fan-gallery/pending", requireAuth, async (req, res) => {
+    try {
+      const photos = await storage.getPendingFanPhotos();
+      res.json(photos);
+    } catch (error) {
+      console.error("Error fetching pending photos:", error);
+      res.status(500).json({ message: "Erro ao buscar fotos pendentes" });
+    }
+  });
+
+  app.patch("/api/admin/fan-gallery/:id/approve", requireAuth, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const adminUser = (req.session as any).user?.username || "admin";
+      
+      const photo = await storage.updateFanPhotoStatus(id, "approved", adminUser);
+      res.json({ success: true, message: "Foto aprovada com sucesso!", photo });
+    } catch (error) {
+      console.error("Error approving photo:", error);
+      res.status(500).json({ message: "Erro ao aprovar foto" });
+    }
+  });
+
+  app.patch("/api/admin/fan-gallery/:id/reject", requireAuth, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const adminUser = (req.session as any).user?.username || "admin";
+      
+      const photo = await storage.updateFanPhotoStatus(id, "rejected", adminUser);
+      res.json({ success: true, message: "Foto rejeitada com sucesso!", photo });
+    } catch (error) {
+      console.error("Error rejecting photo:", error);
+      res.status(500).json({ message: "Erro ao rejeitar foto" });
+    }
+  });
+
+  app.delete("/api/admin/fan-gallery/:id", requireAuth, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteFanPhoto(id);
+      res.json({ success: true, message: "Foto removida com sucesso!" });
+    } catch (error) {
+      console.error("Error deleting photo:", error);
+      res.status(500).json({ message: "Erro ao remover foto" });
     }
   });
 
