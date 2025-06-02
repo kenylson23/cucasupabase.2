@@ -7,7 +7,7 @@ import {
   insertOrderSchema,
   insertAnalyticsEventSchema 
 } from "@shared/schema";
-import { getSimpleSession, requireAuth, loginHandler, logoutHandler, getUserHandler } from "./simpleAuth";
+import { getSimpleSession, requireAuth, loginHandler, logoutHandler, getUserHandler, registerHandler } from "./simpleAuth";
 import { seedDatabase } from "./seed";
 import { z } from "zod";
 
