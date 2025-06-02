@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Suspense, lazy } from "react";
+import { useCriticalResourcePreload } from "@/hooks/use-image-preload";
 
 // Lazy loading dos componentes de página
 const Home = lazy(() => import("@/pages/home"));
@@ -35,6 +36,9 @@ function Router() {
 }
 
 function App() {
+  // Preload recursos críticos
+  useCriticalResourcePreload();
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
