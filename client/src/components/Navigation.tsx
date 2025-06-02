@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Moon, Sun } from "lucide-react";
+import { Menu, X, Moon, Sun, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [location] = useLocation();
+  const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
     // Check for saved theme preference or default to 'light'
@@ -127,20 +129,37 @@ export default function Navigation() {
               </motion.button>
             </div>
 
-            {/* Admin Login Button */}
-            <Link href="/login">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  variant="outline"
-                  className="bg-cuca-red text-white border-cuca-red hover:bg-cuca-red/90 hover:text-white"
+            {/* Admin Access */}
+            {isAuthenticated && user?.role === "admin" ? (
+              <Link href="/admin">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  Entrar
-                </Button>
-              </motion.div>
-            </Link>
+                  <Button
+                    variant="outline"
+                    className="bg-cuca-red text-white border-cuca-red hover:bg-cuca-red/90 hover:text-white flex items-center gap-2"
+                  >
+                    <Settings className="h-4 w-4" />
+                    Painel Admin
+                  </Button>
+                </motion.div>
+              </Link>
+            ) : (
+              <Link href="/login">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    variant="outline"
+                    className="bg-cuca-red text-white border-cuca-red hover:bg-cuca-red/90 hover:text-white"
+                  >
+                    Entrar
+                  </Button>
+                </motion.div>
+              </Link>
+            )}
             
             {/* Dark Mode Toggle */}
             <motion.div
@@ -247,16 +266,31 @@ export default function Navigation() {
               >
                 Contato
               </motion.button>
-              <Link href="/login">
-                <motion.span 
-                  onClick={() => setIsOpen(false)}
-                  className="block w-full text-left px-3 py-2 bg-cuca-red text-white rounded-md mx-2 mt-2 text-center cursor-pointer hover:bg-cuca-red/90 transition-colors"
-                  whileHover={{ x: 5 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Entrar
-                </motion.span>
-              </Link>
+              {/* Admin Access Mobile */}
+              {isAuthenticated && user?.role === "admin" ? (
+                <Link href="/admin">
+                  <motion.span 
+                    onClick={() => setIsOpen(false)}
+                    className="block w-full text-left px-3 py-2 bg-cuca-red text-white rounded-md mx-2 mt-2 text-center cursor-pointer hover:bg-cuca-red/90 transition-colors flex items-center justify-center gap-2"
+                    whileHover={{ x: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Settings className="h-4 w-4" />
+                    Painel Admin
+                  </motion.span>
+                </Link>
+              ) : (
+                <Link href="/login">
+                  <motion.span 
+                    onClick={() => setIsOpen(false)}
+                    className="block w-full text-left px-3 py-2 bg-cuca-red text-white rounded-md mx-2 mt-2 text-center cursor-pointer hover:bg-cuca-red/90 transition-colors"
+                    whileHover={{ x: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Entrar
+                  </motion.span>
+                </Link>
+              )}
             </div>
           </motion.div>
         )}
