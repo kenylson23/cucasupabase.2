@@ -9,7 +9,7 @@ import { useCriticalResourcePreload } from "@/hooks/use-image-preload";
 // Lazy loading dos componentes de página
 const Home = lazy(() => import("@/pages/home"));
 const PontosVenda = lazy(() => import("@/pages/pontos-venda"));
-const AdminPanel = lazy(() => import("@/pages/admin"));
+const AdminPanel = lazy(() => import("@/pages/admin-simple"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 
 // Componente de loading

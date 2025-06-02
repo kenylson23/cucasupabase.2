@@ -5,9 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { 
   BarChart3, 
@@ -18,22 +16,8 @@ import {
   TrendingUp,
   Eye,
   Edit,
-  Trash2,
-  CheckCircle,
-  XCircle,
-  Clock
+  Trash2
 } from "lucide-react";
-
-interface AdminStats {
-  totalProducts: number;
-  activeProducts: number;
-  totalCustomers: number;
-  activeCustomers: number;
-  totalOrders: number;
-  pendingOrders: number;
-  unreadMessages: number;
-  totalRevenue: number;
-}
 
 export default function AdminPanel() {
   const { toast } = useToast();
@@ -56,7 +40,7 @@ export default function AdminPanel() {
   }, [isAuthenticated, isLoading, toast]);
 
   // Fetch admin stats
-  const { data: stats, isLoading: statsLoading } = useQuery<AdminStats>({
+  const { data: stats } = useQuery({
     queryKey: ["/api/admin/stats"],
     enabled: isAuthenticated,
   });
@@ -64,24 +48,6 @@ export default function AdminPanel() {
   // Fetch contact messages
   const { data: messages = [], isLoading: messagesLoading } = useQuery({
     queryKey: ["/api/admin/contact-messages"],
-    enabled: isAuthenticated,
-  });
-
-  // Fetch products
-  const { data: products = [], isLoading: productsLoading } = useQuery({
-    queryKey: ["/api/admin/products"],
-    enabled: isAuthenticated,
-  });
-
-  // Fetch customers
-  const { data: customers = [], isLoading: customersLoading } = useQuery({
-    queryKey: ["/api/admin/customers"],
-    enabled: isAuthenticated,
-  });
-
-  // Fetch orders
-  const { data: orders = [], isLoading: ordersLoading } = useQuery({
-    queryKey: ["/api/admin/orders"],
     enabled: isAuthenticated,
   });
 
@@ -119,45 +85,6 @@ export default function AdminPanel() {
       toast({
         title: "Erro",
         description: "Falha ao atualizar mensagem.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  // Update order status mutation
-  const updateOrderMutation = useMutation({
-    mutationFn: async ({ id, status }: { id: number; status: string }) => {
-      const response = await fetch(`/api/admin/orders/${id}/status`, {
-        method: "PATCH",
-        body: JSON.stringify({ status }),
-        headers: { "Content-Type": "application/json" },
-      });
-      if (!response.ok) throw new Error('Failed to update order');
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
-      toast({
-        title: "Sucesso",
-        description: "Status do pedido atualizado.",
-      });
-    },
-    onError: (error: Error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Sessão Expirada",
-          description: "Fazendo login novamente...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
-      toast({
-        title: "Erro",
-        description: "Falha ao atualizar status do pedido.",
         variant: "destructive",
       });
     },
@@ -204,9 +131,9 @@ export default function AdminPanel() {
                 <Package className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.activeProducts}</div>
+                <div className="text-2xl font-bold">{stats.activeProducts || 0}</div>
                 <p className="text-xs text-muted-foreground">
-                  {stats.totalProducts} total
+                  {stats.totalProducts || 0} total
                 </p>
               </CardContent>
             </Card>
@@ -217,9 +144,9 @@ export default function AdminPanel() {
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.activeCustomers}</div>
+                <div className="text-2xl font-bold">{stats.activeCustomers || 0}</div>
                 <p className="text-xs text-muted-foreground">
-                  {stats.totalCustomers} total
+                  {stats.totalCustomers || 0} total
                 </p>
               </CardContent>
             </Card>
@@ -230,9 +157,9 @@ export default function AdminPanel() {
                 <ShoppingCart className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.totalOrders}</div>
+                <div className="text-2xl font-bold">{stats.totalOrders || 0}</div>
                 <p className="text-xs text-muted-foreground">
-                  {stats.pendingOrders} pendentes
+                  {stats.pendingOrders || 0} pendentes
                 </p>
               </CardContent>
             </Card>
@@ -247,17 +174,17 @@ export default function AdminPanel() {
                   {new Intl.NumberFormat('pt-AO', {
                     style: 'currency',
                     currency: 'AOA'
-                  }).format(stats.totalRevenue)}
+                  }).format(stats.totalRevenue || 0)}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {stats.unreadMessages} mensagens não lidas
+                  {stats.unreadMessages || 0} mensagens não lidas
                 </p>
               </CardContent>
             </Card>
           </div>
         )}
 
-        {/* Main Content Tabs */}
+        {/* Main Content */}
         <Tabs defaultValue="messages" className="space-y-4">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="messages">Mensagens</TabsTrigger>
@@ -280,7 +207,7 @@ export default function AdminPanel() {
                   <div className="flex justify-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cuca-yellow"></div>
                   </div>
-                ) : messages && messages.length > 0 ? (
+                ) : Array.isArray(messages) && messages.length > 0 ? (
                   <div className="space-y-4">
                     {messages.map((message: any) => (
                       <div key={message.id} className="border rounded-lg p-4">
@@ -322,7 +249,7 @@ export default function AdminPanel() {
             </Card>
           </TabsContent>
 
-          {/* Products Tab */}
+          {/* Other tabs with placeholder content */}
           <TabsContent value="products">
             <Card>
               <CardHeader>
@@ -332,54 +259,13 @@ export default function AdminPanel() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {productsLoading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cuca-yellow"></div>
-                  </div>
-                ) : products && products.length > 0 ? (
-                  <div className="space-y-4">
-                    {products.map((product: any) => (
-                      <div key={product.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <h4 className="font-semibold">{product.name}</h4>
-                              <Badge variant={product.isActive ? 'default' : 'secondary'}>
-                                {product.isActive ? 'Ativo' : 'Inativo'}
-                              </Badge>
-                            </div>
-                            <p className="text-sm text-muted-foreground mb-2">{product.description}</p>
-                            <div className="flex gap-4 text-sm">
-                              <span>Preço: {new Intl.NumberFormat('pt-AO', {
-                                style: 'currency',
-                                currency: 'AOA'
-                              }).format(parseFloat(product.price))}</span>
-                              <span>Estoque: {product.stock}</span>
-                              <span>Categoria: {product.category}</span>
-                            </div>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="outline">
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button size="sm" variant="outline">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-center py-8 text-muted-foreground">
-                    Nenhum produto encontrado
-                  </p>
-                )}
+                <p className="text-center py-8 text-muted-foreground">
+                  Funcionalidade de gestão de produtos em desenvolvimento
+                </p>
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* Orders Tab */}
           <TabsContent value="orders">
             <Card>
               <CardHeader>
@@ -389,71 +275,13 @@ export default function AdminPanel() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {ordersLoading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cuca-yellow"></div>
-                  </div>
-                ) : orders && orders.length > 0 ? (
-                  <div className="space-y-4">
-                    {orders.map((order: any) => (
-                      <div key={order.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-start mb-3">
-                          <div>
-                            <h4 className="font-semibold">Pedido #{order.id}</h4>
-                            <p className="text-sm text-muted-foreground">
-                              {new Date(order.createdAt).toLocaleString('pt-AO')}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Badge variant={
-                              order.status === 'pending' ? 'default' : 
-                              order.status === 'completed' ? 'default' : 'secondary'
-                            }>
-                              {order.status === 'pending' ? 'Pendente' : 
-                               order.status === 'completed' ? 'Concluído' : order.status}
-                            </Badge>
-                            <select
-                              value={order.status}
-                              onChange={(e) => updateOrderMutation.mutate({ 
-                                id: order.id, 
-                                status: e.target.value 
-                              })}
-                              className="text-sm border rounded px-2 py-1"
-                            >
-                              <option value="pending">Pendente</option>
-                              <option value="processing">Processando</option>
-                              <option value="shipped">Enviado</option>
-                              <option value="completed">Concluído</option>
-                              <option value="cancelled">Cancelado</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <p><strong>Total:</strong> {new Intl.NumberFormat('pt-AO', {
-                              style: 'currency',
-                              currency: 'AOA'
-                            }).format(parseFloat(order.total))}</p>
-                            <p><strong>Pagamento:</strong> {order.paymentStatus}</p>
-                          </div>
-                          <div>
-                            <p><strong>Método:</strong> {order.paymentMethod || 'N/A'}</p>
-                            <p><strong>Endereço:</strong> {order.shippingAddress}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-center py-8 text-muted-foreground">
-                    Nenhum pedido encontrado
-                  </p>
-                )}
+                <p className="text-center py-8 text-muted-foreground">
+                  Funcionalidade de gestão de pedidos em desenvolvimento
+                </p>
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* Customers Tab */}
           <TabsContent value="customers">
             <Card>
               <CardHeader>
@@ -463,41 +291,9 @@ export default function AdminPanel() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {customersLoading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cuca-yellow"></div>
-                  </div>
-                ) : customers && customers.length > 0 ? (
-                  <div className="space-y-4">
-                    {customers.map((customer: any) => (
-                      <div key={customer.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="font-semibold">
-                              {customer.firstName && customer.lastName 
-                                ? `${customer.firstName} ${customer.lastName}` 
-                                : customer.username}
-                            </h4>
-                            <p className="text-sm text-muted-foreground">{customer.email}</p>
-                            {customer.phone && (
-                              <p className="text-sm text-muted-foreground">{customer.phone}</p>
-                            )}
-                            <p className="text-xs text-muted-foreground">
-                              Cadastrado em: {new Date(customer.createdAt).toLocaleDateString('pt-AO')}
-                            </p>
-                          </div>
-                          <Badge variant={customer.isActive ? 'default' : 'secondary'}>
-                            {customer.isActive ? 'Ativo' : 'Inativo'}
-                          </Badge>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-center py-8 text-muted-foreground">
-                    Nenhum cliente encontrado
-                  </p>
-                )}
+                <p className="text-center py-8 text-muted-foreground">
+                  Funcionalidade de gestão de clientes em desenvolvimento
+                </p>
               </CardContent>
             </Card>
           </TabsContent>
