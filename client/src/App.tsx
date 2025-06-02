@@ -3,17 +3,34 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Home from "@/pages/home";
-import PontosVenda from "@/pages/pontos-venda";
-import NotFound from "@/pages/not-found";
+import { Suspense, lazy } from "react";
+
+// Lazy loading dos componentes de página
+const Home = lazy(() => import("@/pages/home"));
+const PontosVenda = lazy(() => import("@/pages/pontos-venda"));
+const NotFound = lazy(() => import("@/pages/not-found"));
+
+// Componente de loading
+function PageLoader() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-cuca-yellow mx-auto mb-4"></div>
+        <p className="text-muted-foreground">Carregando...</p>
+      </div>
+    </div>
+  );
+}
 
 function Router() {
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/pontos-venda" component={PontosVenda} />
-      <Route component={NotFound} />
-    </Switch>
+    <Suspense fallback={<PageLoader />}>
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/pontos-venda" component={PontosVenda} />
+        <Route component={NotFound} />
+      </Switch>
+    </Suspense>
   );
 }
 
