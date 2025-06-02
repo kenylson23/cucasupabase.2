@@ -64,8 +64,8 @@ export default function HeritageSection() {
           >
             <div className="rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-all duration-300">
               <img
-                src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
-                alt="Celebração cultural angolana"
+                src="/cuca-brinde-2025.jpg"
+                alt="Brinde ao Novo Ano com CUCA - O sabor da união"
                 className="w-full h-auto"
               />
             </div>
@@ -73,16 +73,16 @@ export default function HeritageSection() {
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-xl overflow-hidden shadow-lg">
                 <img
-                  src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
-                  alt="Equipamentos modernos de cervejaria"
-                  className="w-full h-auto"
+                  src="/cuca-beer.jpg"
+                  alt="Cerveja CUCA Original - O sabor da união"
+                  className="w-full h-auto object-cover"
                 />
               </div>
               <div className="rounded-xl overflow-hidden shadow-lg">
                 <img
-                  src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
-                  alt="Processo tradicional de fabricação"
-                  className="w-full h-auto"
+                  src="/cuca-brinde-2025.jpg"
+                  alt="Momentos especiais com CUCA"
+                  className="w-full h-auto object-cover"
                 />
               </div>
             </div>
