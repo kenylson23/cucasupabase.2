@@ -51,7 +51,12 @@ export default function LoginPage() {
         description: "Bem-vindo de volta!",
       });
       setTimeout(() => {
-        window.location.href = "/";
+        // Redirecionar para painel admin se for administrador
+        if (data.user && data.user.role === "admin") {
+          window.location.href = "/admin";
+        } else {
+          window.location.href = "/";
+        }
       }, 1000);
     },
     onError: (error: Error) => {
