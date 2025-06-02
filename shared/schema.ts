@@ -116,6 +116,18 @@ export const analyticsEvents = pgTable("analytics_events", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Fan Gallery table
+export const fanPhotos = pgTable("fan_photos", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  caption: text("caption").notNull(),
+  imageData: text("image_data").notNull(), // base64 encoded image
+  status: varchar("status", { length: 20 }).notNull().default("pending"), // pending, approved, rejected
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  approvedAt: timestamp("approved_at"),
+  approvedBy: varchar("approved_by", { length: 255 }),
+});
+
 // Define relations
 export const usersRelations = relations(users, ({ many }) => ({
   orders: many(orders),
@@ -202,6 +214,12 @@ export const insertAnalyticsEventSchema = createInsertSchema(analyticsEvents).pi
   sessionId: true,
   ipAddress: true,
   userAgent: true,
+});
+
+export const insertFanPhotoSchema = createInsertSchema(fanPhotos).pick({
+  name: true,
+  caption: true,
+  imageData: true,
 });
 
 export const upsertAdminUserSchema = createInsertSchema(adminUsers);
