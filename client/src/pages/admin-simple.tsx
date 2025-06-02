@@ -16,7 +16,8 @@ import {
   TrendingUp,
   Eye,
   Edit,
-  Trash2
+  Trash2,
+  Home
 } from "lucide-react";
 
 export default function AdminPanel() {
@@ -111,15 +112,25 @@ export default function AdminPanel() {
               <h1 className="text-2xl font-bold text-foreground">Painel Administrativo CUCA</h1>
               <p className="text-muted-foreground">Gerencie produtos, pedidos e clientes</p>
             </div>
-            <Button 
-              variant="outline" 
-              onClick={async () => {
-                await fetch("/api/auth/logout", { method: "POST" });
-                window.location.href = "/login";
-              }}
-            >
-              Sair
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="secondary" 
+                onClick={() => window.location.href = "/"}
+                className="flex items-center gap-2"
+              >
+                <Home className="h-4 w-4" />
+                Ir para o Site
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={async () => {
+                  await fetch("/api/auth/logout", { method: "POST" });
+                  window.location.href = "/login";
+                }}
+              >
+                Sair
+              </Button>
+            </div>
           </div>
         </div>
       </div>
