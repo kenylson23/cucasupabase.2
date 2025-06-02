@@ -126,6 +126,21 @@ export default function Navigation() {
                 Contato
               </motion.button>
             </div>
+
+            {/* Admin Login Button */}
+            <Link href="/login">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  variant="outline"
+                  className="bg-cuca-red text-white border-cuca-red hover:bg-cuca-red/90 hover:text-white"
+                >
+                  Admin
+                </Button>
+              </motion.div>
+            </Link>
             
             {/* Dark Mode Toggle */}
             <motion.div
@@ -232,6 +247,16 @@ export default function Navigation() {
               >
                 Contato
               </motion.button>
+              <Link href="/login">
+                <motion.span 
+                  onClick={() => setIsOpen(false)}
+                  className="block w-full text-left px-3 py-2 bg-cuca-red text-white rounded-md mx-2 mt-2 text-center cursor-pointer hover:bg-cuca-red/90 transition-colors"
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Admin
+                </motion.span>
+              </Link>
             </div>
           </motion.div>
         )}
