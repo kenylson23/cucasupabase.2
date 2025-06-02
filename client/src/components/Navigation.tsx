@@ -119,6 +119,15 @@ export default function Navigation() {
                   Pontos de Venda
                 </motion.span>
               </Link>
+              <Link href="/galeria-fas">
+                <motion.span 
+                  className="text-foreground hover:text-cuca-yellow transition-colors duration-300 font-medium cursor-pointer"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Galeria dos Fãs
+                </motion.span>
+              </Link>
               <motion.button
                 onClick={() => scrollToSection("contact")}
                 className="text-foreground hover:text-cuca-yellow transition-colors duration-300 font-medium"
@@ -273,6 +282,16 @@ export default function Navigation() {
                   whileTap={{ scale: 0.95 }}
                 >
                   Pontos de Venda
+                </motion.span>
+              </Link>
+              <Link href="/galeria-fas">
+                <motion.span 
+                  onClick={() => setIsOpen(false)}
+                  className="block w-full text-left px-3 py-2 text-foreground hover:text-cuca-yellow transition-colors cursor-pointer"
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Galeria dos Fãs
                 </motion.span>
               </Link>
               <motion.button

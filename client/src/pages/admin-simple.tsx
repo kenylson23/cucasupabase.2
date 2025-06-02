@@ -114,6 +114,14 @@ export default function AdminPanel() {
             </div>
             <div className="flex gap-2">
               <Button 
+                variant="outline" 
+                onClick={() => window.location.href = "/admin/galeria"}
+                className="flex items-center gap-2"
+              >
+                <Eye className="h-4 w-4" />
+                Galeria dos Fãs
+              </Button>
+              <Button 
                 variant="secondary" 
                 onClick={() => window.location.href = "/"}
                 className="flex items-center gap-2"

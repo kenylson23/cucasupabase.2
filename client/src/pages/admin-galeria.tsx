@@ -275,7 +275,7 @@ export default function AdminGaleria() {
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-400">{photo.caption}</p>
                       <p className="text-xs text-gray-500">
-                        Enviada em: {formatDate(photo.createdAt ? photo.createdAt.toString() : null)}
+                        Enviada em: {formatDate(photo.createdAt)}
                       </p>
                     </div>
                     <div className="flex gap-2 mt-4">
