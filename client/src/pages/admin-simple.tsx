@@ -33,7 +33,7 @@ export default function AdminPanel() {
         variant: "destructive",
       });
       setTimeout(() => {
-        window.location.href = "/api/login";
+        window.location.href = "/login";
       }, 500);
       return;
     }
@@ -113,7 +113,10 @@ export default function AdminPanel() {
             </div>
             <Button 
               variant="outline" 
-              onClick={() => window.location.href = "/api/logout"}
+              onClick={async () => {
+                await fetch("/api/auth/logout", { method: "POST" });
+                window.location.href = "/login";
+              }}
             >
               Sair
             </Button>
