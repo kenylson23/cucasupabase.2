@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 export default function HeritageSection() {
   return (
@@ -63,26 +64,30 @@ export default function HeritageSection() {
             className="space-y-6"
           >
             <div className="rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-all duration-300">
-              <img
+              <OptimizedImage
                 src="/cuca-brinde-2025.jpg"
                 alt="Brinde ao Novo Ano com CUCA - O sabor da união"
                 className="w-full h-auto"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                priority={true}
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-xl overflow-hidden shadow-lg">
-                <img
+                <OptimizedImage
                   src="/cuca-beer.jpg"
                   alt="Cerveja CUCA Original - O sabor da união"
                   className="w-full h-auto object-cover"
+                  sizes="(max-width: 1024px) 50vw, 25vw"
                 />
               </div>
               <div className="rounded-xl overflow-hidden shadow-lg">
-                <img
+                <OptimizedImage
                   src="/cuca-brinde-2025.jpg"
                   alt="Momentos especiais com CUCA"
                   className="w-full h-auto object-cover"
+                  sizes="(max-width: 1024px) 50vw, 25vw"
                 />
               </div>
             </div>

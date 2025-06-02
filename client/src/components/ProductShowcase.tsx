@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Award, Leaf, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 const products = [
   {
@@ -75,11 +76,16 @@ export default function ProductShowcase() {
             >
               <Card className="bg-card dark:bg-card rounded-2xl shadow-xl hover:shadow-2xl overflow-hidden transition-all duration-300 border-0 dark:border dark:border-border">
                 <motion.div
-                  className="h-48 sm:h-56 lg:h-64 bg-cover bg-center relative overflow-hidden"
-                  style={{ backgroundImage: `url(${product.image})` }}
+                  className="h-48 sm:h-56 lg:h-64 relative overflow-hidden"
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.3 }}
                 >
+                  <OptimizedImage
+                    src={product.image}
+                    alt={`${product.name} - CUCA Cerveja`}
+                    className="w-full h-full object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </motion.div>
                 <CardContent className="p-4 sm:p-6">
