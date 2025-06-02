@@ -9,6 +9,7 @@ import { useCriticalResourcePreload } from "@/hooks/use-image-preload";
 // Lazy loading dos componentes de página
 const Home = lazy(() => import("@/pages/home"));
 const PontosVenda = lazy(() => import("@/pages/pontos-venda"));
+const AdminPanel = lazy(() => import("@/pages/admin"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 
 // Componente de loading
@@ -29,6 +30,7 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/pontos-venda" component={PontosVenda} />
+        <Route path="/admin" component={AdminPanel} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>
