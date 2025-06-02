@@ -20,27 +20,36 @@ export default function HeroSection() {
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
       {/* Hero Background */}
-      <div
+      <motion.div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/images/cuca-hero.jpg')`,
+          backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.5)), url('/images/cuca-hero.jpg')`,
         }}
+        initial={{ scale: 1.1 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 1.5 }}
       />
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.h1
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="font-montserrat font-bold text-5xl sm:text-6xl lg:text-7xl text-cuca-white mb-6 leading-tight"
+          className="font-montserrat font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-cuca-white mb-4 sm:mb-6 leading-tight"
         >
-          <span className="text-cuca-yellow">CUCA</span>
+          <motion.span 
+            className="text-cuca-yellow"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          >
+            CUCA
+          </motion.span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-montserrat font-semibold text-2xl sm:text-3xl lg:text-4xl text-cuca-white mb-8"
+          className="font-montserrat font-semibold text-xl sm:text-2xl md:text-3xl lg:text-4xl text-cuca-white mb-6 sm:mb-8"
         >
           Em Angola, cerveja é CUCA
         </motion.p>
@@ -49,7 +58,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-lg sm:text-xl mb-12 max-w-2xl mx-auto leading-relaxed text-[#ffd900]"
+          className="text-base sm:text-lg lg:text-xl mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed text-[#ffd900] px-4"
         >
           A cerveja que une Angola há gerações. Sabor autêntico, tradição
           genuína, orgulho nacional.
@@ -59,21 +68,31 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center px-4"
         >
-          <Button
-            onClick={() => scrollToSection("heritage")}
-            className="bg-cuca-red hover:bg-red-700 text-cuca-white font-montserrat font-semibold px-8 py-4 text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            Descubra Nossa História
-          </Button>
-          <Button
-            onClick={() => scrollToSection("products")}
-            variant="outline"
-            className="border-2 border-cuca-yellow text-cuca-yellow hover:bg-cuca-yellow hover:text-cuca-black font-montserrat font-semibold px-8 py-4 text-lg transition-all duration-300 transform hover:scale-105"
+            <Button
+              onClick={() => scrollToSection("heritage")}
+              className="bg-cuca-red hover:bg-red-700 text-cuca-white font-montserrat font-semibold px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg transition-all duration-300 shadow-lg w-full sm:w-auto"
+            >
+              Descubra Nossa História
+            </Button>
+          </motion.div>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            Ver Produtos
-          </Button>
+            <Button
+              onClick={() => scrollToSection("products")}
+              variant="outline"
+              className="border-2 border-cuca-yellow text-cuca-yellow hover:bg-cuca-yellow hover:text-cuca-black font-montserrat font-semibold px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg transition-all duration-300 w-full sm:w-auto"
+            >
+              Ver Produtos
+            </Button>
+          </motion.div>
         </motion.div>
       </div>
       {/* Scroll Indicator */}

@@ -34,25 +34,25 @@
 }
 
 .dark {
-  --background: 0 0% 0%;
-  --foreground: 0 0% 100%;
-  --muted: 0 0% 15%;
-  --muted-foreground: 0 0% 65%;
-  --popover: 0 0% 0%;
-  --popover-foreground: 0 0% 100%;
-  --card: 0 0% 0%;
-  --card-foreground: 0 0% 100%;
-  --border: 0 0% 15%;
-  --input: 0 0% 15%;
-  --primary: 51 100% 50%;
+  --background: 20 14% 4%; /* #0F0A08 - dark brown-black */
+  --foreground: 48 100% 85%; /* #FFF2CC - light cream */
+  --muted: 30 20% 10%; /* #1F1611 - dark brown */
+  --muted-foreground: 48 30% 65%; /* #C4B894 - muted gold */
+  --popover: 20 14% 4%;
+  --popover-foreground: 48 100% 85%;
+  --card: 25 25% 8%; /* #1A1208 - card background */
+  --card-foreground: 48 100% 85%;
+  --border: 30 20% 15%; /* #2B2016 - border color */
+  --input: 30 20% 15%;
+  --primary: 51 100% 50%; /* Keep CUCA yellow */
   --primary-foreground: 0 0% 0%;
-  --secondary: 0 0% 15%;
-  --secondary-foreground: 0 0% 98%;
-  --accent: 0 0% 15%;
-  --accent-foreground: 0 0% 98%;
-  --destructive: 1 77% 49%;
-  --destructive-foreground: 0 0% 98%;
-  --ring: 0 0% 83%;
+  --secondary: 30 20% 10%;
+  --secondary-foreground: 48 100% 85%;
+  --accent: 30 20% 15%;
+  --accent-foreground: 48 100% 85%;
+  --destructive: 1 77% 49%; /* Keep CUCA red */
+  --destructive-foreground: 48 100% 85%;
+  --ring: 51 100% 50%; /* CUCA yellow for focus rings */
 }
 
 @layer base {

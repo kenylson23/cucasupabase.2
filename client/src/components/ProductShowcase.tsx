@@ -44,25 +44,25 @@ const features = [
 
 export default function ProductShowcase() {
   return (
-    <section id="products" className="py-20 bg-cuca-white">
+    <section id="products" className="py-12 sm:py-16 lg:py-20 bg-background dark:bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
         >
-          <h2 className="font-montserrat font-bold text-4xl sm:text-5xl text-cuca-black mb-6">
+          <h2 className="font-montserrat font-bold text-3xl sm:text-4xl lg:text-5xl text-foreground mb-4 sm:mb-6">
             Nossos <span className="text-cuca-yellow">Produtos</span>
           </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto px-4">
             Descubra a linha completa de cervejas CUCA, cada uma com seu sabor
             único e qualidade excepcional
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16">
           {products.map((product, index) => (
             <motion.div
               key={product.name}
@@ -70,24 +70,35 @@ export default function ProductShowcase() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: index * 0.2 }}
               viewport={{ once: true }}
+              whileHover={{ y: -10 }}
+              className="group"
             >
-              <Card className="bg-white rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-all duration-300 group">
-                <div
-                  className="h-64 bg-cover bg-center"
+              <Card className="bg-card dark:bg-card rounded-2xl shadow-xl hover:shadow-2xl overflow-hidden transition-all duration-300 border-0 dark:border dark:border-border">
+                <motion.div
+                  className="h-48 sm:h-56 lg:h-64 bg-cover bg-center relative overflow-hidden"
                   style={{ backgroundImage: `url(${product.image})` }}
-                />
-                <CardContent className="p-6">
-                  <h3 className="font-montserrat font-bold text-2xl text-cuca-black mb-3">
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </motion.div>
+                <CardContent className="p-4 sm:p-6">
+                  <h3 className="font-montserrat font-bold text-xl sm:text-2xl text-card-foreground mb-2 sm:mb-3">
                     {product.name}
                   </h3>
-                  <p className="text-gray-600 mb-4">{product.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-cuca-yellow font-semibold">
+                  <p className="text-muted-foreground mb-4 text-sm sm:text-base leading-relaxed">{product.description}</p>
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0">
+                    <span className="text-cuca-yellow font-semibold text-sm sm:text-base">
                       {product.alcohol}
                     </span>
-                    <Button className="bg-cuca-red text-white hover:bg-red-700 transition-colors">
-                      Saiba Mais
-                    </Button>
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Button className="bg-cuca-red text-white hover:bg-red-700 transition-all duration-300 w-full sm:w-auto text-sm sm:text-base">
+                        Saiba Mais
+                      </Button>
+                    </motion.div>
                   </div>
                 </CardContent>
               </Card>
@@ -96,7 +107,7 @@ export default function ProductShowcase() {
         </div>
 
         {/* Additional Product Features */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
@@ -104,15 +115,20 @@ export default function ProductShowcase() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: index * 0.2 }}
               viewport={{ once: true }}
-              className="text-center"
+              whileHover={{ y: -5 }}
+              className="text-center group"
             >
-              <div className="bg-cuca-yellow/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <motion.div 
+                className="bg-cuca-yellow/20 dark:bg-cuca-yellow/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-cuca-yellow/30 dark:group-hover:bg-cuca-yellow/40 transition-colors duration-300"
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              >
                 <feature.icon className="text-cuca-yellow h-8 w-8" />
-              </div>
-              <h4 className="font-montserrat font-semibold text-xl mb-2">
+              </motion.div>
+              <h4 className="font-montserrat font-semibold text-lg sm:text-xl text-foreground mb-2">
                 {feature.title}
               </h4>
-              <p className="text-gray-600">{feature.description}</p>
+              <p className="text-muted-foreground text-sm sm:text-base leading-relaxed px-2">{feature.description}</p>
             </motion.div>
           ))}
         </div>

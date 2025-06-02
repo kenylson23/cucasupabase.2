@@ -91,25 +91,25 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-20 bg-cuca-white">
+    <section id="contact" className="py-12 sm:py-16 lg:py-20 bg-background dark:bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
         >
-          <h2 className="font-montserrat font-bold text-4xl sm:text-5xl text-cuca-black mb-6">
+          <h2 className="font-montserrat font-bold text-3xl sm:text-4xl lg:text-5xl text-foreground mb-4 sm:mb-6">
             <span className="text-cuca-red">Contato</span> & Localização
           </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto px-4">
             Estamos sempre prontos para atender você. Entre em contato conosco
             ou visite uma de nossas lojas
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
           {/* Contact Information */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -117,25 +117,37 @@ export default function ContactSection() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h3 className="font-montserrat font-semibold text-2xl text-cuca-black mb-8">
+            <h3 className="font-montserrat font-semibold text-xl sm:text-2xl text-foreground mb-6 sm:mb-8">
               Informações de Contato
             </h3>
 
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {contactInfo.map((info, index) => (
-                <div key={info.title} className="flex items-start">
-                  <div className="bg-cuca-yellow/20 w-12 h-12 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-                    <info.icon className="text-cuca-yellow h-6 w-6" />
-                  </div>
+                <motion.div 
+                  key={info.title} 
+                  className="flex items-start group"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  whileHover={{ x: 5 }}
+                >
+                  <motion.div 
+                    className="bg-cuca-yellow/20 dark:bg-cuca-yellow/30 w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0 group-hover:bg-cuca-yellow/30 dark:group-hover:bg-cuca-yellow/40 transition-colors duration-300"
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  >
+                    <info.icon className="text-cuca-yellow h-5 w-5 sm:h-6 sm:w-6" />
+                  </motion.div>
                   <div>
-                    <h4 className="font-semibold text-cuca-black mb-1">
+                    <h4 className="font-semibold text-foreground mb-1 text-sm sm:text-base">
                       {info.title}
                     </h4>
-                    <p className="text-gray-600 whitespace-pre-line">
+                    <p className="text-muted-foreground whitespace-pre-line text-sm sm:text-base">
                       {info.content}
                     </p>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
 
