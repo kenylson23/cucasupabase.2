@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
-import { CheckCircle, XCircle, Trash2, Clock, Image, Users } from "lucide-react";
+import { CheckCircle, XCircle, Trash2, Clock, Image, Users, ArrowLeft } from "lucide-react";
 import type { FanPhoto } from "@shared/schema";
 
 export default function AdminGaleria() {
@@ -179,6 +179,16 @@ export default function AdminGaleria() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
+        <div className="flex justify-between items-center mb-4">
+          <Button
+            variant="outline"
+            onClick={() => window.location.href = "/admin"}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Voltar ao Painel
+          </Button>
+        </div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
           Galeria dos Fãs - Administração
         </h1>

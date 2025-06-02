@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Camera, Upload, Heart, Star } from "lucide-react";
+import { Camera, Upload, Heart, Star, ArrowLeft } from "lucide-react";
 import type { FanPhoto, InsertFanPhoto } from "@shared/schema";
 
 export default function GaleriaFas() {
@@ -101,6 +101,17 @@ export default function GaleriaFas() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
+          <div className="flex justify-between items-center mb-6">
+            <Button
+              variant="outline"
+              onClick={() => window.location.href = "/"}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Voltar ao Site
+            </Button>
+            <div className="flex-1" />
+          </div>
           <h1 className="text-4xl font-bold text-amber-800 dark:text-amber-200 mb-4">
             Galeria dos Fãs da CUCA
           </h1>
