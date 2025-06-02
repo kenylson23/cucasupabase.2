@@ -16,9 +16,9 @@ export function getSimpleSession() {
   
   const sessionStore = new pgStore({
     conString: process.env.DATABASE_URL,
-    createTableIfMissing: true,
+    createTableIfMissing: false,
     ttl: sessionTtl,
-    tableName: "admin_sessions",
+    tableName: "sessions",
   });
 
   return session({
