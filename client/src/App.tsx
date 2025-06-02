@@ -11,6 +11,7 @@ const Home = lazy(() => import("@/pages/home"));
 const PontosVenda = lazy(() => import("@/pages/pontos-venda"));
 const LoginPage = lazy(() => import("@/pages/login"));
 const AdminPanel = lazy(() => import("@/pages/admin-simple"));
+const Dashboard = lazy(() => import("@/pages/dashboard"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 
 // Componente de loading
@@ -33,6 +34,7 @@ function Router() {
         <Route path="/pontos-venda" component={PontosVenda} />
         <Route path="/login" component={LoginPage} />
         <Route path="/admin" component={AdminPanel} />
+        <Route path="/dashboard" component={Dashboard} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>

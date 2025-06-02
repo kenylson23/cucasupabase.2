@@ -51,9 +51,11 @@ export default function LoginPage() {
         description: "Bem-vindo de volta!",
       });
       setTimeout(() => {
-        // Redirecionar para painel admin se for administrador
+        // Redirecionar baseado no tipo de usuário
         if (data.user && data.user.role === "admin") {
           window.location.href = "/admin";
+        } else if (data.user && data.user.role === "user") {
+          window.location.href = "/dashboard";
         } else {
           window.location.href = "/";
         }
