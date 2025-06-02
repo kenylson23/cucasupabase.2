@@ -137,7 +137,7 @@ export default function Navigation() {
                   variant="outline"
                   className="bg-cuca-red text-white border-cuca-red hover:bg-cuca-red/90 hover:text-white"
                 >
-                  Admin
+                  Entrar
                 </Button>
               </motion.div>
             </Link>
@@ -254,7 +254,7 @@ export default function Navigation() {
                   whileHover={{ x: 5 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Admin
+                  Entrar
                 </motion.span>
               </Link>
             </div>
