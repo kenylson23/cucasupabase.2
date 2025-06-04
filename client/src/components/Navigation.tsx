@@ -190,18 +190,19 @@ export default function Navigation() {
                 </motion.div>
               </div>
             ) : (
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  onClick={() => window.location.href = "/login"}
-                  variant="outline"
-                  className="bg-cuca-red text-white border-cuca-red hover:bg-cuca-red/90 hover:text-white"
+              <Link href="/login">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  Entrar
-                </Button>
-              </motion.div>
+                  <Button
+                    variant="outline"
+                    className="bg-cuca-red text-white border-cuca-red hover:bg-cuca-red/90 hover:text-white"
+                  >
+                    Entrar
+                  </Button>
+                </motion.div>
+              </Link>
             )}
             
             {/* Dark Mode Toggle */}
@@ -362,17 +363,16 @@ export default function Navigation() {
                   </motion.button>
                 </div>
               ) : (
-                <motion.span 
-                  onClick={() => {
-                    setIsOpen(false);
-                    window.location.href = "/api/login";
-                  }}
-                  className="block w-full text-left px-3 py-2 bg-cuca-red text-white rounded-md mx-2 mt-2 text-center cursor-pointer hover:bg-cuca-red/90 transition-colors"
-                  whileHover={{ x: 5 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Entrar
-                </motion.span>
+                <Link href="/login">
+                  <motion.span 
+                    onClick={() => setIsOpen(false)}
+                    className="block w-full text-left px-3 py-2 bg-cuca-red text-white rounded-md mx-2 mt-2 text-center cursor-pointer hover:bg-cuca-red/90 transition-colors"
+                    whileHover={{ x: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Entrar
+                  </motion.span>
+                </Link>
               )}
             </div>
           </motion.div>
