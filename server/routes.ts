@@ -326,6 +326,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User photo routes (authenticated)
+  app.get("/api/user/my-photos", requireAuth, async (req, res) => {
+    try {
+      const userId = (req.session as any).user?.id;
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
+      const photos = await storage.getUserPhotos(userId);
+      res.json(photos);
+    } catch (error) {
+      console.error("Error fetching user photos:", error);
+      res.status(500).json({ message: "Erro ao buscar suas fotos" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

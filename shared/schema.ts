@@ -122,6 +122,7 @@ export const fanPhotos = pgTable("fan_photos", {
   name: varchar("name", { length: 255 }).notNull(),
   caption: text("caption").notNull(),
   imageData: text("image_data").notNull(), // base64 encoded image
+  userId: integer("user_id").references(() => users.id).notNull(),
   status: varchar("status", { length: 20 }).notNull().default("pending"), // pending, approved, rejected
   createdAt: timestamp("created_at").defaultNow().notNull(),
   approvedAt: timestamp("approved_at"),

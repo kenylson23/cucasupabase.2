@@ -71,6 +71,7 @@ export interface IStorage {
   getFanPhotos(): Promise<FanPhoto[]>;
   getPendingFanPhotos(): Promise<FanPhoto[]>;
   getApprovedFanPhotos(): Promise<FanPhoto[]>;
+  getUserPhotos(userId: number): Promise<FanPhoto[]>;
   updateFanPhotoStatus(id: number, status: string, approvedBy?: string): Promise<FanPhoto>;
   deleteFanPhoto(id: number): Promise<void>;
 }
@@ -289,6 +290,15 @@ export class DatabaseStorage implements IStorage {
       .where(eq(fanPhotos.id, id))
       .returning();
     return photo;
+  }
+
+  async getUserPhotos(userId: number): Promise<FanPhoto[]> {
+    const photos = await db
+      .select()
+      .from(fanPhotos)
+      .where(eq(fanPhotos.userId, userId))
+      .orderBy(desc(fanPhotos.createdAt));
+    return photos;
   }
 
   async deleteFanPhoto(id: number): Promise<void> {

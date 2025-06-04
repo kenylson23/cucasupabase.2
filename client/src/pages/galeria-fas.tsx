@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
-import { Camera, Upload, Heart, Star, ArrowLeft } from "lucide-react";
+import { isUnauthorizedError } from "@/lib/authUtils";
+import { Camera, Upload, Heart, Star, ArrowLeft, Clock, CheckCircle, XCircle } from "lucide-react";
 import type { FanPhoto, InsertFanPhoto } from "@shared/schema";
 
 export default function GaleriaFas() {
@@ -20,10 +23,32 @@ export default function GaleriaFas() {
   const [isProcessingImage, setIsProcessingImage] = useState<boolean>(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+
+  // Verificação de autenticação
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      toast({
+        title: "Acesso negado",
+        description: "Você precisa estar logado para acessar a galeria de fãs.",
+        variant: "destructive",
+      });
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 1000);
+      return;
+    }
+  }, [isAuthenticated, authLoading, toast]);
 
   // Buscar fotos aprovadas
   const { data: approvedPhotos = [], isLoading } = useQuery<FanPhoto[]>({
     queryKey: ["/api/fan-gallery"],
+  });
+
+  // Buscar minhas fotos enviadas
+  const { data: myPhotos = [] } = useQuery<FanPhoto[]>({
+    queryKey: ["/api/user/my-photos"],
+    enabled: isAuthenticated,
   });
 
   // Mutation para enviar nova foto
@@ -42,6 +67,17 @@ export default function GaleriaFas() {
     },
     onError: (error) => {
       console.error("Erro detalhado ao enviar foto:", error);
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Sessão expirada",
+          description: "Você será redirecionado para fazer login novamente.",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 1000);
+        return;
+      }
       toast({
         title: "Erro ao enviar foto",
         description: error.message || "Tente novamente mais tarde.",
