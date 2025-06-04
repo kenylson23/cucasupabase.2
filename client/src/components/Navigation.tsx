@@ -172,12 +172,12 @@ export default function Navigation() {
                 </Link>
               )
             ) : (
-              <Link href="/login">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  onClick={() => window.location.href = "/api/login"}
                     variant="outline"
                     className="bg-cuca-red text-white border-cuca-red hover:bg-cuca-red/90 hover:text-white"
                   >
