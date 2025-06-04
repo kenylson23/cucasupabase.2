@@ -17,6 +17,7 @@ export default function GaleriaFas() {
     imageData: ""
   });
   const [imagePreview, setImagePreview] = useState<string>("");
+  const [isProcessingImage, setIsProcessingImage] = useState<boolean>(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -49,14 +50,64 @@ export default function GaleriaFas() {
     },
   });
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      img.onload = () => {
+        // Definir tamanho máximo
+        const MAX_WIDTH = 800;
+        const MAX_HEIGHT = 600;
+        
+        let { width, height } = img;
+        
+        // Redimensionar se necessário
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height = (height * MAX_WIDTH) / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width = (width * MAX_HEIGHT) / height;
+            height = MAX_HEIGHT;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Desenhar e comprimir
+        ctx?.drawImage(img, 0, 0, width, height);
+        
+        // Tentar diferentes qualidades até obter tamanho aceitável
+        let quality = 0.8;
+        let compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        
+        // Se ainda muito grande, reduzir qualidade
+        while (compressedDataUrl.length > 500000 && quality > 0.1) {
+          quality -= 0.1;
+          compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        }
+        
+        resolve(compressedDataUrl);
+      };
+      
+      img.onerror = reject;
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Verificar tamanho (máximo 5MB)
-      if (file.size > 5 * 1024 * 1024) {
+      // Verificar tamanho (máximo 10MB)
+      if (file.size > 10 * 1024 * 1024) {
         toast({
           title: "Arquivo muito grande",
-          description: "A imagem deve ter no máximo 5MB.",
+          description: "A imagem deve ter no máximo 10MB.",
           variant: "destructive",
         });
         return;
@@ -72,13 +123,25 @@ export default function GaleriaFas() {
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const base64String = e.target?.result as string;
-        setFormData(prev => ({ ...prev, imageData: base64String }));
-        setImagePreview(base64String);
-      };
-      reader.readAsDataURL(file);
+      setIsProcessingImage(true);
+      try {
+        const compressedDataUrl = await compressImage(file);
+        setFormData(prev => ({ ...prev, imageData: compressedDataUrl }));
+        setImagePreview(compressedDataUrl);
+        
+        toast({
+          title: "Imagem carregada",
+          description: "Imagem otimizada e pronta para envio.",
+        });
+      } catch (error) {
+        toast({
+          title: "Erro ao processar imagem",
+          description: "Tente novamente com outra imagem.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsProcessingImage(false);
+      }
     }
   };
 
@@ -180,11 +243,21 @@ export default function GaleriaFas() {
                       variant="outline"
                       onClick={() => document.getElementById('image')?.click()}
                       className="w-full h-32 border-dashed border-2 hover:border-amber-400"
+                      disabled={isProcessingImage}
                     >
                       <div className="text-center">
-                        <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                        <p>Clique para escolher uma foto</p>
-                        <p className="text-sm text-gray-500">Máximo 5MB</p>
+                        {isProcessingImage ? (
+                          <>
+                            <div className="h-8 w-8 mx-auto mb-2 border-2 border-gray-400 border-t-amber-600 rounded-full animate-spin" />
+                            <p>Processando imagem...</p>
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                            <p>Clique para escolher uma foto</p>
+                            <p className="text-sm text-gray-500">Máximo 10MB (será otimizada)</p>
+                          </>
+                        )}
                       </div>
                     </Button>
                   </div>
