@@ -64,6 +64,7 @@ export default function GaleriaFas() {
       setFormData({ name: "", caption: "", imageData: "" });
       setImagePreview("");
       queryClient.invalidateQueries({ queryKey: ["/api/fan-gallery"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/user/my-photos"] });
     },
     onError: (error) => {
       console.error("Erro detalhado ao enviar foto:", error);
@@ -228,7 +229,7 @@ export default function GaleriaFas() {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-3 gap-8">
           {/* Formulário de envio */}
           <Card>
             <CardHeader>
@@ -322,6 +323,68 @@ export default function GaleriaFas() {
               </form>
             </CardContent>
           </Card>
+
+          {/* Minhas fotos enviadas */}
+          <div>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="h-5 w-5" />
+                  Minhas fotos
+                </CardTitle>
+                <CardDescription>
+                  Estado das suas fotos enviadas
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {myPhotos.length > 0 ? (
+                  <div className="space-y-4 max-h-96 overflow-y-auto">
+                    {myPhotos.map((photo) => (
+                      <div key={photo.id} className="flex items-center gap-3 p-3 border rounded-lg">
+                        <img
+                          src={photo.imageData}
+                          alt={photo.caption}
+                          className="w-16 h-16 object-cover rounded-lg"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-sm truncate">{photo.caption}</p>
+                          <p className="text-xs text-gray-500">
+                            {new Date(photo.createdAt).toLocaleDateString('pt-BR')}
+                          </p>
+                        </div>
+                        <div className="flex-shrink-0">
+                          {photo.status === 'pending' && (
+                            <Badge variant="secondary" className="flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              Pendente
+                            </Badge>
+                          )}
+                          {photo.status === 'approved' && (
+                            <Badge variant="default" className="flex items-center gap-1 bg-green-600">
+                              <CheckCircle className="h-3 w-3" />
+                              Aprovada
+                            </Badge>
+                          )}
+                          {photo.status === 'rejected' && (
+                            <Badge variant="destructive" className="flex items-center gap-1">
+                              <XCircle className="h-3 w-3" />
+                              Rejeitada
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Camera className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                    <p className="text-gray-500">Você ainda não enviou fotos.</p>
+                    <p className="text-sm text-gray-400">Envie sua primeira foto!</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Galeria de fotos aprovadas */}
           <div>

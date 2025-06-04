@@ -240,7 +240,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Fan Gallery routes
-  app.post("/api/fan-gallery", async (req, res) => {
+  app.post("/api/fan-gallery", requireAuth, async (req, res) => {
     try {
       const result = insertFanPhotoSchema.safeParse(req.body);
       if (!result.success) {
@@ -250,7 +250,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const photo = await storage.createFanPhoto(result.data);
+      const userId = (req.session as any).user?.id;
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const photoData = { ...result.data, userId };
+      const photo = await storage.createFanPhoto(photoData);
       res.json({ success: true, message: "Foto enviada com sucesso! Aguardando aprovação.", photo });
     } catch (error) {
       console.error("Error creating fan photo:", error);

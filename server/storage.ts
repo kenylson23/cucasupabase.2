@@ -243,7 +243,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Fan Photos operations
-  async createFanPhoto(insertPhoto: InsertFanPhoto): Promise<FanPhoto> {
+  async createFanPhoto(insertPhoto: InsertFanPhoto & { userId?: number }): Promise<FanPhoto> {
     const [photo] = await db
       .insert(fanPhotos)
       .values(insertPhoto)
