@@ -1,11 +1,10 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -21,7 +20,16 @@ import {
   Trash2,
   CheckCircle,
   XCircle,
-  Clock
+  Clock,
+  Camera,
+  Settings,
+  LogOut,
+  Bell,
+  Activity,
+  DollarSign,
+  ArrowUpRight,
+  Star,
+  Heart
 } from "lucide-react";
 
 interface AdminStats {
@@ -37,7 +45,7 @@ interface AdminStats {
 
 export default function AdminPanel() {
   const { toast } = useToast();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   const queryClient = useQueryClient();
 
   // Redirect to login if not authenticated
@@ -74,15 +82,10 @@ export default function AdminPanel() {
   });
 
   // Fetch customers
-  const { data: customers = [], isLoading: customersLoading, error: customersError } = useQuery<any[]>({
+  const { data: customers = [], isLoading: customersLoading } = useQuery<any[]>({
     queryKey: ["/api/admin/customers"],
     enabled: isAuthenticated,
   });
-
-  // Debug logging
-  console.log("Customers data:", customers);
-  console.log("Customers loading:", customersLoading);
-  console.log("Customers error:", customersError);
 
   // Fetch orders
   const { data: orders = [], isLoading: ordersLoading } = useQuery<any[]>({
@@ -93,20 +96,14 @@ export default function AdminPanel() {
   // Update message status mutation
   const updateMessageMutation = useMutation({
     mutationFn: async ({ id, updates }: { id: number; updates: any }) => {
-      const response = await fetch(`/api/admin/contact-messages/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify(updates),
-        headers: { "Content-Type": "application/json" },
-      });
-      if (!response.ok) throw new Error('Failed to update message');
-      return response.json();
+      return apiRequest(`/api/admin/contact-messages/${id}`, "PATCH", updates);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/contact-messages"] });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
       toast({
         title: "Sucesso",
-        description: "Mensagem atualizada com sucesso.",
+        description: "Mensagem atualizada.",
       });
     },
     onError: (error: Error) => {
@@ -129,447 +126,444 @@ export default function AdminPanel() {
     },
   });
 
-  // Update order status mutation
-  const updateOrderMutation = useMutation({
-    mutationFn: async ({ id, status }: { id: number; status: string }) => {
-      const response = await fetch(`/api/admin/orders/${id}/status`, {
-        method: "PATCH",
-        body: JSON.stringify({ status }),
-        headers: { "Content-Type": "application/json" },
-      });
-      if (!response.ok) throw new Error('Failed to update order');
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
-      toast({
-        title: "Sucesso",
-        description: "Status do pedido atualizado.",
-      });
-    },
-    onError: (error: Error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Sessão Expirada",
-          description: "Fazendo login novamente...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
-      toast({
-        title: "Erro",
-        description: "Falha ao atualizar status do pedido.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  // Update customer status mutation
-  const updateCustomerMutation = useMutation({
-    mutationFn: async ({ id, updates }: { id: number; updates: any }) => {
-      const response = await fetch(`/api/admin/customers/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify(updates),
-        headers: { "Content-Type": "application/json" },
-      });
-      if (!response.ok) throw new Error('Failed to update customer');
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/customers"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
-      toast({
-        title: "Sucesso",
-        description: "Cliente atualizado com sucesso.",
-      });
-    },
-    onError: (error: Error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Sessão Expirada",
-          description: "Fazendo login novamente...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
-      toast({
-        title: "Erro",
-        description: "Falha ao atualizar cliente.",
-        variant: "destructive",
-      });
-    },
-  });
-
   if (!isAuthenticated || isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 to-orange-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cuca-yellow mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Verificando autenticação...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Verificando autenticação...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b bg-white dark:bg-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      {/* Modern Header with Glass Effect */}
+      <div className="backdrop-blur-lg bg-white/80 dark:bg-gray-900/80 border-b border-white/20 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Painel Administrativo CUCA</h1>
-              <p className="text-muted-foreground">Gerencie produtos, pedidos e clientes</p>
+          <div className="flex justify-between items-center py-6">
+            <div className="flex items-center space-x-4">
+              <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-3 rounded-xl shadow-lg">
+                <BarChart3 className="h-8 w-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+                  CUCA Dashboard
+                </h1>
+                <p className="text-gray-600 dark:text-gray-300">Central de administração inteligente</p>
+              </div>
             </div>
-            <Button 
-              variant="outline" 
-              onClick={() => window.location.href = "/api/logout"}
-            >
-              Sair
-            </Button>
+            <div className="flex items-center space-x-3">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                className="relative hover:bg-white/20"
+              >
+                <Bell className="h-5 w-5" />
+                {stats && stats.unreadMessages > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {stats.unreadMessages}
+                  </span>
+                )}
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                className="hover:bg-white/20"
+              >
+                <Settings className="h-5 w-5" />
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => window.location.href = "/api/logout"}
+                className="bg-white/20 hover:bg-white/30 border-white/30"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sair
+              </Button>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Overview */}
+        {/* Modern Stats Cards */}
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Produtos</CardTitle>
-                <Package className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.activeProducts}</div>
-                <p className="text-xs text-muted-foreground">
-                  {stats.totalProducts} total
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Clientes</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.activeCustomers}</div>
-                <p className="text-xs text-muted-foreground">
-                  {stats.totalCustomers} total
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Pedidos</CardTitle>
-                <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalOrders}</div>
-                <p className="text-xs text-muted-foreground">
-                  {stats.pendingOrders} pendentes
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Receita</CardTitle>
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {new Intl.NumberFormat('pt-AO', {
-                    style: 'currency',
-                    currency: 'AOA'
-                  }).format(stats.totalRevenue)}
+            {/* Produtos Card */}
+            <Card className="group hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-blue-500/10 to-blue-600/20 hover:from-blue-500/20 hover:to-blue-600/30">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-blue-600 dark:text-blue-400">Produtos</p>
+                    <p className="text-3xl font-bold text-blue-700 dark:text-blue-300">{stats.activeProducts}</p>
+                    <p className="text-xs text-blue-500/70 flex items-center mt-1">
+                      <ArrowUpRight className="h-3 w-3 mr-1" />
+                      {stats.totalProducts} total
+                    </p>
+                  </div>
+                  <div className="bg-blue-500/20 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                    <Package className="h-8 w-8 text-blue-600" />
+                  </div>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  {stats.unreadMessages} mensagens não lidas
-                </p>
+              </CardContent>
+            </Card>
+
+            {/* Clientes Card */}
+            <Card className="group hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-green-500/10 to-green-600/20 hover:from-green-500/20 hover:to-green-600/30">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-green-600 dark:text-green-400">Clientes</p>
+                    <p className="text-3xl font-bold text-green-700 dark:text-green-300">{stats.activeCustomers}</p>
+                    <p className="text-xs text-green-500/70 flex items-center mt-1">
+                      <Heart className="h-3 w-3 mr-1" />
+                      {stats.totalCustomers} total
+                    </p>
+                  </div>
+                  <div className="bg-green-500/20 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                    <Users className="h-8 w-8 text-green-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Pedidos Card */}
+            <Card className="group hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-purple-500/10 to-purple-600/20 hover:from-purple-500/20 hover:to-purple-600/30">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-purple-600 dark:text-purple-400">Pedidos</p>
+                    <p className="text-3xl font-bold text-purple-700 dark:text-purple-300">{stats.totalOrders}</p>
+                    <p className="text-xs text-purple-500/70 flex items-center mt-1">
+                      <Clock className="h-3 w-3 mr-1" />
+                      {stats.pendingOrders} pendentes
+                    </p>
+                  </div>
+                  <div className="bg-purple-500/20 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                    <ShoppingCart className="h-8 w-8 text-purple-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Receita Card */}
+            <Card className="group hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-amber-500/10 to-orange-600/20 hover:from-amber-500/20 hover:to-orange-600/30">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-amber-600 dark:text-amber-400">Receita</p>
+                    <p className="text-3xl font-bold text-amber-700 dark:text-amber-300">
+                      {new Intl.NumberFormat('pt-AO', {
+                        style: 'currency',
+                        currency: 'AOA'
+                      }).format(stats.totalRevenue)}
+                    </p>
+                    <p className="text-xs text-amber-500/70 flex items-center mt-1">
+                      <TrendingUp className="h-3 w-3 mr-1" />
+                      +12% este mês
+                    </p>
+                  </div>
+                  <div className="bg-amber-500/20 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                    <DollarSign className="h-8 w-8 text-amber-600" />
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
         )}
 
+        {/* Quick Actions Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <Card 
+            className="group cursor-pointer hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-indigo-500/10 to-indigo-600/20 hover:from-indigo-500/20 hover:to-indigo-600/30"
+            onClick={() => window.location.href = "/admin-galeria"}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-indigo-700 dark:text-indigo-300">Galeria dos Fãs</h3>
+                  <p className="text-sm text-indigo-600/70 mt-1">Gerencie fotos enviadas pelos fãs</p>
+                  <div className="flex items-center mt-3">
+                    <Star className="h-4 w-4 text-indigo-500 mr-1" />
+                    <span className="text-xs text-indigo-500">Moderar conteúdo</span>
+                  </div>
+                </div>
+                <div className="bg-indigo-500/20 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                  <Camera className="h-8 w-8 text-indigo-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="group cursor-pointer hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-emerald-500/10 to-emerald-600/20 hover:from-emerald-500/20 hover:to-emerald-600/30">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-emerald-700 dark:text-emerald-300">Clientes</h3>
+                  <p className="text-sm text-emerald-600/70 mt-1">Visualize e gerencie clientes</p>
+                  <div className="flex items-center mt-3">
+                    <Activity className="h-4 w-4 text-emerald-500 mr-1" />
+                    <span className="text-xs text-emerald-500">{stats?.totalCustomers || 0} registrados</span>
+                  </div>
+                </div>
+                <div className="bg-emerald-500/20 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                  <Users className="h-8 w-8 text-emerald-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="group cursor-pointer hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-rose-500/10 to-rose-600/20 hover:from-rose-500/20 hover:to-rose-600/30">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-rose-700 dark:text-rose-300">Mensagens</h3>
+                  <p className="text-sm text-rose-600/70 mt-1">Responder a contatos</p>
+                  <div className="flex items-center mt-3">
+                    <Bell className="h-4 w-4 text-rose-500 mr-1" />
+                    <span className="text-xs text-rose-500">{stats?.unreadMessages || 0} não lidas</span>
+                  </div>
+                </div>
+                <div className="bg-rose-500/20 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                  <MessageSquare className="h-8 w-8 text-rose-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Main Content Tabs */}
-        <Tabs defaultValue="messages" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="messages">Mensagens</TabsTrigger>
-            <TabsTrigger value="products">Produtos</TabsTrigger>
-            <TabsTrigger value="orders">Pedidos</TabsTrigger>
-            <TabsTrigger value="customers">Clientes</TabsTrigger>
+        <Tabs defaultValue="messages" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+            <TabsTrigger value="messages" data-tab="messages" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700">Mensagens</TabsTrigger>
+            <TabsTrigger value="products" data-tab="products" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700">Produtos</TabsTrigger>
+            <TabsTrigger value="orders" data-tab="orders" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700">Pedidos</TabsTrigger>
+            <TabsTrigger value="customers" data-tab="customers" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700">Clientes</TabsTrigger>
           </TabsList>
 
           {/* Messages Tab */}
-          <TabsContent value="messages">
-            <Card>
+          <TabsContent value="messages" className="space-y-4">
+            <Card className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border-0 shadow-xl">
               <CardHeader>
-                <CardTitle>Mensagens de Contato</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5" />
+                  Mensagens de Contato
+                </CardTitle>
                 <CardDescription>
-                  Gerencie as mensagens recebidas dos clientes
+                  Mensagens enviadas pelos visitantes do site
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 {messagesLoading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cuca-yellow"></div>
-                  </div>
-                ) : messages && messages.length > 0 ? (
                   <div className="space-y-4">
-                    {messages.map((message: any) => (
-                      <div key={message.id} className="border rounded-lg p-4">
+                    {[...Array(3)].map((_, i) => (
+                      <div key={i} className="bg-gray-200 dark:bg-gray-700 rounded-lg p-4 animate-pulse">
+                        <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded mb-2"></div>
+                        <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded w-3/4"></div>
+                      </div>
+                    ))}
+                  </div>
+                ) : messages.length > 0 ? (
+                  <div className="space-y-4">
+                    {messages.map((message) => (
+                      <div key={message.id} className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
                         <div className="flex justify-between items-start mb-2">
                           <div>
-                            <h4 className="font-semibold">{message.name}</h4>
-                            <p className="text-sm text-muted-foreground">{message.email}</p>
+                            <h4 className="font-semibold text-gray-900 dark:text-gray-100">{message.name}</h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{message.email}</p>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <Badge variant={message.status === 'unread' ? 'destructive' : 'secondary'}>
-                              {message.status === 'unread' ? 'Não lida' : 'Lida'}
-                            </Badge>
+                          <Badge variant={message.status === 'read' ? 'default' : 'destructive'}>
+                            {message.status === 'read' ? 'Lida' : 'Não lida'}
+                          </Badge>
+                        </div>
+                        <p className="text-gray-700 dark:text-gray-300 mb-3">{message.message}</p>
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-gray-500">
+                            {new Date(message.createdAt).toLocaleDateString('pt-BR')}
+                          </span>
+                          {message.status === 'unread' && (
                             <Button
                               size="sm"
-                              variant="outline"
                               onClick={() => updateMessageMutation.mutate({ 
                                 id: message.id, 
-                                updates: { status: message.status === 'unread' ? 'read' : 'unread' }
+                                updates: { status: 'read' } 
                               })}
+                              disabled={updateMessageMutation.isPending}
                             >
-                              {message.status === 'unread' ? <Eye className="h-4 w-4" /> : <MessageSquare className="h-4 w-4" />}
+                              <CheckCircle className="h-4 w-4 mr-1" />
+                              Marcar como lida
                             </Button>
-                          </div>
+                          )}
                         </div>
-                        <h5 className="font-medium mb-2">{message.subject}</h5>
-                        <p className="text-sm text-muted-foreground mb-2">{message.message}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(message.createdAt).toLocaleString('pt-AO')}
-                        </p>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-center py-8 text-muted-foreground">
-                    Nenhuma mensagem encontrada
-                  </p>
+                  <div className="text-center py-8">
+                    <MessageSquare className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                    <p className="text-gray-500">Nenhuma mensagem encontrada</p>
+                  </div>
                 )}
               </CardContent>
             </Card>
           </TabsContent>
 
           {/* Products Tab */}
-          <TabsContent value="products">
-            <Card>
+          <TabsContent value="products" className="space-y-4">
+            <Card className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border-0 shadow-xl">
               <CardHeader>
-                <CardTitle>Gestão de Produtos</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="h-5 w-5" />
+                  Gestão de Produtos
+                </CardTitle>
                 <CardDescription>
                   Gerencie o catálogo de produtos CUCA
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 {productsLoading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cuca-yellow"></div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {[...Array(6)].map((_, i) => (
+                      <div key={i} className="bg-gray-200 dark:bg-gray-700 rounded-lg h-48 animate-pulse"></div>
+                    ))}
                   </div>
-                ) : products && products.length > 0 ? (
-                  <div className="space-y-4">
-                    {products.map((product: any) => (
-                      <div key={product.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <h4 className="font-semibold">{product.name}</h4>
-                              <Badge variant={product.isActive ? 'default' : 'secondary'}>
-                                {product.isActive ? 'Ativo' : 'Inativo'}
-                              </Badge>
-                            </div>
-                            <p className="text-sm text-muted-foreground mb-2">{product.description}</p>
-                            <div className="flex gap-4 text-sm">
-                              <span>Preço: {new Intl.NumberFormat('pt-AO', {
-                                style: 'currency',
-                                currency: 'AOA'
-                              }).format(parseFloat(product.price))}</span>
-                              <span>Estoque: {product.stock}</span>
-                              <span>Categoria: {product.category}</span>
-                            </div>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="outline">
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button size="sm" variant="outline">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
+                ) : products.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {products.map((product) => (
+                      <div key={product.id} className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                        <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">{product.name}</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{product.description}</p>
+                        <div className="flex justify-between items-center">
+                          <span className="font-bold text-amber-600">
+                            {new Intl.NumberFormat('pt-AO', {
+                              style: 'currency',
+                              currency: 'AOA'
+                            }).format(product.price)}
+                          </span>
+                          <Badge variant={product.isActive ? 'default' : 'secondary'}>
+                            {product.isActive ? 'Ativo' : 'Inativo'}
+                          </Badge>
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-center py-8 text-muted-foreground">
-                    Nenhum produto encontrado
-                  </p>
+                  <div className="text-center py-8">
+                    <Package className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                    <p className="text-gray-500">Nenhum produto encontrado</p>
+                  </div>
                 )}
               </CardContent>
             </Card>
           </TabsContent>
 
           {/* Orders Tab */}
-          <TabsContent value="orders">
-            <Card>
+          <TabsContent value="orders" className="space-y-4">
+            <Card className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border-0 shadow-xl">
               <CardHeader>
-                <CardTitle>Gestão de Pedidos</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <ShoppingCart className="h-5 w-5" />
+                  Gestão de Pedidos
+                </CardTitle>
                 <CardDescription>
-                  Acompanhe e gerencie os pedidos dos clientes
+                  Acompanhe e gerencie pedidos dos clientes
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 {ordersLoading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cuca-yellow"></div>
-                  </div>
-                ) : orders && orders.length > 0 ? (
                   <div className="space-y-4">
-                    {orders.map((order: any) => (
-                      <div key={order.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-start mb-3">
+                    {[...Array(3)].map((_, i) => (
+                      <div key={i} className="bg-gray-200 dark:bg-gray-700 rounded-lg p-4 animate-pulse">
+                        <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded mb-2"></div>
+                        <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded w-3/4"></div>
+                      </div>
+                    ))}
+                  </div>
+                ) : orders.length > 0 ? (
+                  <div className="space-y-4">
+                    {orders.map((order) => (
+                      <div key={order.id} className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                        <div className="flex justify-between items-start mb-2">
                           <div>
-                            <h4 className="font-semibold">Pedido #{order.id}</h4>
-                            <p className="text-sm text-muted-foreground">
-                              {new Date(order.createdAt).toLocaleString('pt-AO')}
+                            <h4 className="font-semibold text-gray-900 dark:text-gray-100">Pedido #{order.id}</h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              {new Date(order.createdAt).toLocaleDateString('pt-BR')}
                             </p>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <Badge variant={
-                              order.status === 'pending' ? 'default' : 
-                              order.status === 'completed' ? 'default' : 'secondary'
-                            }>
-                              {order.status === 'pending' ? 'Pendente' : 
-                               order.status === 'completed' ? 'Concluído' : order.status}
-                            </Badge>
-                            <select
-                              value={order.status}
-                              onChange={(e) => updateOrderMutation.mutate({ 
-                                id: order.id, 
-                                status: e.target.value 
-                              })}
-                              className="text-sm border rounded px-2 py-1"
-                            >
-                              <option value="pending">Pendente</option>
-                              <option value="processing">Processando</option>
-                              <option value="shipped">Enviado</option>
-                              <option value="completed">Concluído</option>
-                              <option value="cancelled">Cancelado</option>
-                            </select>
-                          </div>
+                          <Badge variant={order.status === 'completed' ? 'default' : 'secondary'}>
+                            {order.status}
+                          </Badge>
                         </div>
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <p><strong>Total:</strong> {new Intl.NumberFormat('pt-AO', {
+                        <div className="flex justify-between items-center">
+                          <span className="font-bold text-amber-600">
+                            {new Intl.NumberFormat('pt-AO', {
                               style: 'currency',
                               currency: 'AOA'
-                            }).format(parseFloat(order.total))}</p>
-                            <p><strong>Pagamento:</strong> {order.paymentStatus}</p>
-                          </div>
-                          <div>
-                            <p><strong>Método:</strong> {order.paymentMethod || 'N/A'}</p>
-                            <p><strong>Endereço:</strong> {order.shippingAddress}</p>
-                          </div>
+                            }).format(order.total)}
+                          </span>
+                          <span className="text-sm text-gray-500">{order.paymentStatus}</span>
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-center py-8 text-muted-foreground">
-                    Nenhum pedido encontrado
-                  </p>
+                  <div className="text-center py-8">
+                    <ShoppingCart className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                    <p className="text-gray-500">Nenhum pedido encontrado</p>
+                  </div>
                 )}
               </CardContent>
             </Card>
           </TabsContent>
 
           {/* Customers Tab */}
-          <TabsContent value="customers">
-            <Card>
+          <TabsContent value="customers" className="space-y-4">
+            <Card className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border-0 shadow-xl">
               <CardHeader>
-                <CardTitle>Gestão de Clientes</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Gestão de Clientes
+                </CardTitle>
                 <CardDescription>
-                  Visualize e gerencie os clientes cadastrados
+                  Visualize e gerencie clientes registrados
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 {customersLoading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cuca-yellow"></div>
-                  </div>
-                ) : customers && customers.length > 0 ? (
                   <div className="space-y-4">
-                    {customers.map((customer: any) => (
-                      <div key={customer.id} className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
-                        <div className="flex justify-between items-start mb-3">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                              <h4 className="font-semibold text-lg">
-                                {customer.firstName && customer.lastName 
-                                  ? `${customer.firstName} ${customer.lastName}` 
-                                  : customer.username}
-                              </h4>
-                              <Badge variant={customer.isActive ? 'default' : 'secondary'}>
-                                {customer.isActive ? 'Ativo' : 'Inativo'}
-                              </Badge>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
-                              <div>
-                                <p><span className="font-medium">Email:</span> {customer.email}</p>
-                                <p><span className="font-medium">Username:</span> {customer.username}</p>
-                              </div>
-                              <div>
-                                {customer.phone && (
-                                  <p><span className="font-medium">Telefone:</span> {customer.phone}</p>
-                                )}
-                                <p><span className="font-medium">Cadastrado:</span> {new Date(customer.createdAt).toLocaleDateString('pt-AO')}</p>
-                              </div>
-                            </div>
+                    {[...Array(3)].map((_, i) => (
+                      <div key={i} className="bg-gray-200 dark:bg-gray-700 rounded-lg p-4 animate-pulse">
+                        <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded mb-2"></div>
+                        <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded w-3/4"></div>
+                      </div>
+                    ))}
+                  </div>
+                ) : customers.length > 0 ? (
+                  <div className="space-y-4">
+                    {customers.map((customer) => (
+                      <div key={customer.id} className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <h4 className="font-semibold text-gray-900 dark:text-gray-100">{customer.username}</h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{customer.email}</p>
                           </div>
-                          <div className="flex items-center gap-2 ml-4">
-                            <select
-                              value={customer.isActive ? 'active' : 'inactive'}
-                              onChange={(e) => updateCustomerMutation.mutate({ 
-                                id: customer.id, 
-                                updates: { isActive: e.target.value === 'active' }
-                              })}
-                              className="text-sm border rounded px-3 py-1 bg-background"
-                              disabled={updateCustomerMutation.isPending}
-                            >
-                              <option value="active">Ativo</option>
-                              <option value="inactive">Inativo</option>
-                            </select>
-                          </div>
+                          <Badge variant={customer.isActive ? 'default' : 'secondary'}>
+                            {customer.isActive ? 'Ativo' : 'Inativo'}
+                          </Badge>
                         </div>
-                        <div className="flex justify-between items-center pt-2 border-t">
-                          <div className="text-xs text-muted-foreground">
-                            ID: #{customer.id} • Última atualização: {new Date(customer.updatedAt).toLocaleDateString('pt-AO')}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            {customer.isActive ? '🟢 Conta Ativa' : '🔴 Conta Inativa'}
-                          </div>
+                        <div className="text-xs text-gray-500">
+                          Registrado em: {new Date(customer.createdAt).toLocaleDateString('pt-BR')}
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-center py-8 text-muted-foreground">
-                    Nenhum cliente encontrado
-                  </p>
+                  <div className="text-center py-8">
+                    <Users className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                    <p className="text-gray-500">Nenhum cliente encontrado</p>
+                  </div>
                 )}
               </CardContent>
             </Card>
