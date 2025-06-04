@@ -174,7 +174,10 @@ export default function Navigation() {
                   whileTap={{ scale: 0.95 }}
                 >
                   <Button
-                    onClick={() => window.location.href = "/api/logout"}
+                    onClick={() => {
+                      fetch('/api/auth/logout', { method: 'POST' })
+                        .then(() => window.location.reload());
+                    }}
                     variant="outline"
                     className="border-gray-300 text-gray-700 hover:bg-gray-50"
                   >
@@ -188,7 +191,7 @@ export default function Navigation() {
                 whileTap={{ scale: 0.95 }}
               >
                 <Button
-                  onClick={() => window.location.href = "/api/login"}
+                  onClick={() => window.location.href = "/login"}
                   variant="outline"
                   className="bg-cuca-red text-white border-cuca-red hover:bg-cuca-red/90 hover:text-white"
                 >
@@ -337,17 +340,18 @@ export default function Navigation() {
                       Admin
                     </motion.span>
                   </Link>
-                  <motion.span 
+                  <motion.button 
                     onClick={() => {
                       setIsOpen(false);
-                      window.location.href = "/api/logout";
+                      fetch('/api/auth/logout', { method: 'POST' })
+                        .then(() => window.location.reload());
                     }}
                     className="block w-full text-left px-3 py-2 border border-gray-300 text-gray-700 rounded-md mx-2 text-center cursor-pointer hover:bg-gray-50 transition-colors"
                     whileHover={{ x: 5 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     Sair
-                  </motion.span>
+                  </motion.button>
                 </div>
               ) : (
                 <motion.span 

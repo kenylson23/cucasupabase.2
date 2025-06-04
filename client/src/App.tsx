@@ -32,29 +32,18 @@ function PageLoader() {
 }
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
-
   return (
     <Suspense fallback={<PageLoader />}>
       <Switch>
-        {isLoading || !isAuthenticated ? (
-          <>
-            <Route path="/" component={Landing} />
-            <Route path="/pontos-venda" component={PontosVenda} />
-            <Route component={Landing} />
-          </>
-        ) : (
-          <>
-            <Route path="/" component={Home} />
-            <Route path="/pontos-venda" component={PontosVenda} />
-            <Route path="/galeria-fas" component={GaleriaFas} />
-            <Route path="/admin" component={AdminPanel} />
-            <Route path="/admin-galeria" component={AdminGaleria} />
-            <Route path="/admin/galeria" component={AdminGaleria} />
-            <Route path="/dashboard" component={Dashboard} />
-            <Route component={NotFound} />
-          </>
-        )}
+        <Route path="/" component={Home} />
+        <Route path="/pontos-venda" component={PontosVenda} />
+        <Route path="/galeria-fas" component={GaleriaFas} />
+        <Route path="/login" component={lazy(() => import("@/pages/login"))} />
+        <Route path="/admin" component={AdminPanel} />
+        <Route path="/admin-galeria" component={AdminGaleria} />
+        <Route path="/admin/galeria" component={AdminGaleria} />
+        <Route path="/dashboard" component={Dashboard} />
+        <Route component={NotFound} />
       </Switch>
     </Suspense>
   );
