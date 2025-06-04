@@ -140,22 +140,7 @@ export default function Navigation() {
 
             {/* User Access */}
             {isAuthenticated ? (
-              user?.role === "admin" ? (
-                <Link href="/admin">
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Button
-                      variant="outline"
-                      className="bg-cuca-red text-white border-cuca-red hover:bg-cuca-red/90 hover:text-white flex items-center gap-2"
-                    >
-                      <Settings className="h-4 w-4" />
-                      Painel Admin
-                    </Button>
-                  </motion.div>
-                </Link>
-              ) : (
+              <div className="flex items-center gap-3">
                 <Link href="/dashboard">
                   <motion.div
                     whileHover={{ scale: 1.05 }}
@@ -170,7 +155,33 @@ export default function Navigation() {
                     </Button>
                   </motion.div>
                 </Link>
-              )
+                <Link href="/admin">
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button
+                      variant="outline"
+                      className="bg-cuca-red text-white border-cuca-red hover:bg-cuca-red/90 hover:text-white flex items-center gap-2"
+                    >
+                      <Settings className="h-4 w-4" />
+                      Admin
+                    </Button>
+                  </motion.div>
+                </Link>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    onClick={() => window.location.href = "/api/logout"}
+                    variant="outline"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                  >
+                    Sair
+                  </Button>
+                </motion.div>
+              </div>
             ) : (
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -178,13 +189,12 @@ export default function Navigation() {
               >
                 <Button
                   onClick={() => window.location.href = "/api/login"}
-                    variant="outline"
-                    className="bg-cuca-red text-white border-cuca-red hover:bg-cuca-red/90 hover:text-white"
-                  >
-                    Entrar
-                  </Button>
-                </motion.div>
-              </Link>
+                  variant="outline"
+                  className="bg-cuca-red text-white border-cuca-red hover:bg-cuca-red/90 hover:text-white"
+                >
+                  Entrar
+                </Button>
+              </motion.div>
             )}
             
             {/* Dark Mode Toggle */}
@@ -304,23 +314,11 @@ export default function Navigation() {
               </motion.button>
               {/* User Access Mobile */}
               {isAuthenticated ? (
-                user?.role === "admin" ? (
-                  <Link href="/admin">
-                    <motion.span 
-                      onClick={() => setIsOpen(false)}
-                      className="block w-full text-left px-3 py-2 bg-cuca-red text-white rounded-md mx-2 mt-2 text-center cursor-pointer hover:bg-cuca-red/90 transition-colors flex items-center justify-center gap-2"
-                      whileHover={{ x: 5 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Settings className="h-4 w-4" />
-                      Painel Admin
-                    </motion.span>
-                  </Link>
-                ) : (
+                <div className="space-y-2 mt-2">
                   <Link href="/dashboard">
                     <motion.span 
                       onClick={() => setIsOpen(false)}
-                      className="block w-full text-left px-3 py-2 bg-cuca-red text-white rounded-md mx-2 mt-2 text-center cursor-pointer hover:bg-cuca-red/90 transition-colors flex items-center justify-center gap-2"
+                      className="block w-full text-left px-3 py-2 bg-cuca-red text-white rounded-md mx-2 text-center cursor-pointer hover:bg-cuca-red/90 transition-colors flex items-center justify-center gap-2"
                       whileHover={{ x: 5 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -328,18 +326,41 @@ export default function Navigation() {
                       Minha Conta
                     </motion.span>
                   </Link>
-                )
-              ) : (
-                <Link href="/login">
+                  <Link href="/admin">
+                    <motion.span 
+                      onClick={() => setIsOpen(false)}
+                      className="block w-full text-left px-3 py-2 bg-cuca-red text-white rounded-md mx-2 text-center cursor-pointer hover:bg-cuca-red/90 transition-colors flex items-center justify-center gap-2"
+                      whileHover={{ x: 5 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Settings className="h-4 w-4" />
+                      Admin
+                    </motion.span>
+                  </Link>
                   <motion.span 
-                    onClick={() => setIsOpen(false)}
-                    className="block w-full text-left px-3 py-2 bg-cuca-red text-white rounded-md mx-2 mt-2 text-center cursor-pointer hover:bg-cuca-red/90 transition-colors"
+                    onClick={() => {
+                      setIsOpen(false);
+                      window.location.href = "/api/logout";
+                    }}
+                    className="block w-full text-left px-3 py-2 border border-gray-300 text-gray-700 rounded-md mx-2 text-center cursor-pointer hover:bg-gray-50 transition-colors"
                     whileHover={{ x: 5 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    Entrar
+                    Sair
                   </motion.span>
-                </Link>
+                </div>
+              ) : (
+                <motion.span 
+                  onClick={() => {
+                    setIsOpen(false);
+                    window.location.href = "/api/login";
+                  }}
+                  className="block w-full text-left px-3 py-2 bg-cuca-red text-white rounded-md mx-2 mt-2 text-center cursor-pointer hover:bg-cuca-red/90 transition-colors"
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Entrar
+                </motion.span>
               )}
             </div>
           </motion.div>
