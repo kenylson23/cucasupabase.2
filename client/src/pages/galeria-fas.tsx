@@ -40,9 +40,10 @@ export default function GaleriaFas() {
       queryClient.invalidateQueries({ queryKey: ["/api/fan-gallery"] });
     },
     onError: (error) => {
+      console.error("Erro detalhado ao enviar foto:", error);
       toast({
         title: "Erro ao enviar foto",
-        description: "Tente novamente mais tarde.",
+        description: error.message || "Tente novamente mais tarde.",
         variant: "destructive",
       });
     },
@@ -84,6 +85,13 @@ export default function GaleriaFas() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    console.log("Dados do formulário:", {
+      name: formData.name,
+      caption: formData.caption,
+      imageDataLength: formData.imageData.length,
+      hasImageData: !!formData.imageData
+    });
+    
     if (!formData.name.trim() || !formData.caption.trim() || !formData.imageData) {
       toast({
         title: "Campos obrigatórios",
@@ -93,6 +101,7 @@ export default function GaleriaFas() {
       return;
     }
 
+    console.log("Enviando foto para API...");
     submitPhotoMutation.mutate(formData);
   };
 
