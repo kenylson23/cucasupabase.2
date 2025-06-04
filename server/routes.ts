@@ -8,22 +8,28 @@ import {
   insertAnalyticsEventSchema,
   insertFanPhotoSchema 
 } from "@shared/schema";
-import { getSimpleSession, requireAuth, loginHandler, logoutHandler, getUserHandler, registerHandler } from "./simpleAuth";
+import { setupAuth, isAuthenticated } from "./replitAuth";
 import { seedDatabase } from "./seed";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Initialize session middleware
-  app.use(getSimpleSession());
+  // Auth middleware
+  await setupAuth(app);
   
   // Seed database on startup
   await seedDatabase();
 
   // Auth routes
-  app.post('/api/auth/login', loginHandler);
-  app.post('/api/auth/register', registerHandler);
-  app.post('/api/auth/logout', logoutHandler);
-  app.get('/api/auth/user', getUserHandler);
+  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
 
   // Contact form submission endpoint
   app.post("/api/contact", async (req, res) => {
