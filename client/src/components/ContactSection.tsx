@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Twitter, Youtube, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/useAuth";
 
 const contactInfo = [
   {
@@ -48,27 +49,25 @@ export default function ContactSection() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { isAuthenticated, isLoading, user } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!isAuthenticated) {
+      toast({
+        title: "Login necessário",
+        description: "Você precisa estar logado para enviar uma mensagem.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      // Para deployment no Netlify, use Netlify Forms
-      if (typeof window !== "undefined" && window.location.hostname.includes("netlify")) {
-        // Submit via Netlify Forms
-        const formElement = e.target as HTMLFormElement;
-        const netlifyData = new FormData(formElement);
-        
-        await fetch("/", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams(netlifyData as any).toString()
-        });
-      } else {
-        // Submit via API quando rodando localmente
-        await apiRequest("POST", "/api/contact", formData);
-      }
+      // Submit via API
+      await apiRequest("POST", "/api/contact", formData);
       
       toast({
         title: "Mensagem enviada!",
@@ -282,13 +281,31 @@ export default function ContactSection() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-cuca-red hover:bg-red-700 text-white font-montserrat font-semibold py-3 sm:py-4 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSubmitting ? "Enviando..." : "Enviar Mensagem"}
-                </Button>
+                {isAuthenticated ? (
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-cuca-red hover:bg-red-700 text-white font-montserrat font-semibold py-3 sm:py-4 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? "Enviando..." : "Enviar Mensagem"}
+                  </Button>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="text-center p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <p className="text-sm text-yellow-800 font-medium">
+                        Você precisa estar logado para enviar uma mensagem
+                      </p>
+                    </div>
+                    <Button
+                      type="button"
+                      onClick={() => window.location.href = "/login"}
+                      className="w-full bg-cuca-red hover:bg-red-700 text-white font-montserrat font-semibold py-3 sm:py-4 transition-all duration-300 flex items-center justify-center gap-2"
+                    >
+                      <LogIn className="h-5 w-5" />
+                      Fazer Login para Enviar Mensagem
+                    </Button>
+                  </div>
+                )}
               </motion.div>
             </form>
           </motion.div>
