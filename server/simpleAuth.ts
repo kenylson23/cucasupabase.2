@@ -35,6 +35,10 @@ export function getSimpleSession() {
 }
 
 export const requireAuth: RequestHandler = (req, res, next) => {
+  console.log("requireAuth - Session:", req.session);
+  console.log("requireAuth - IsAuthenticated:", (req.session as any)?.isAuthenticated);
+  console.log("requireAuth - User:", (req.session as any)?.user);
+  
   if (req.session && (req.session as any).isAuthenticated) {
     return next();
   }
