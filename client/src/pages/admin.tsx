@@ -62,25 +62,30 @@ export default function AdminPanel() {
   });
 
   // Fetch contact messages
-  const { data: messages = [], isLoading: messagesLoading } = useQuery({
+  const { data: messages = [], isLoading: messagesLoading } = useQuery<any[]>({
     queryKey: ["/api/admin/contact-messages"],
     enabled: isAuthenticated,
   });
 
   // Fetch products
-  const { data: products = [], isLoading: productsLoading } = useQuery({
+  const { data: products = [], isLoading: productsLoading } = useQuery<any[]>({
     queryKey: ["/api/admin/products"],
     enabled: isAuthenticated,
   });
 
   // Fetch customers
-  const { data: customers = [], isLoading: customersLoading } = useQuery({
+  const { data: customers = [], isLoading: customersLoading, error: customersError } = useQuery<any[]>({
     queryKey: ["/api/admin/customers"],
     enabled: isAuthenticated,
   });
 
+  // Debug logging
+  console.log("Customers data:", customers);
+  console.log("Customers loading:", customersLoading);
+  console.log("Customers error:", customersError);
+
   // Fetch orders
-  const { data: orders = [], isLoading: ordersLoading } = useQuery({
+  const { data: orders = [], isLoading: ordersLoading } = useQuery<any[]>({
     queryKey: ["/api/admin/orders"],
     enabled: isAuthenticated,
   });
@@ -158,6 +163,45 @@ export default function AdminPanel() {
       toast({
         title: "Erro",
         description: "Falha ao atualizar status do pedido.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Update customer status mutation
+  const updateCustomerMutation = useMutation({
+    mutationFn: async ({ id, updates }: { id: number; updates: any }) => {
+      const response = await fetch(`/api/admin/customers/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(updates),
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!response.ok) throw new Error('Failed to update customer');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/customers"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
+      toast({
+        title: "Sucesso",
+        description: "Cliente atualizado com sucesso.",
+      });
+    },
+    onError: (error: Error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Sessão Expirada",
+          description: "Fazendo login novamente...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      toast({
+        title: "Erro",
+        description: "Falha ao atualizar cliente.",
         variant: "destructive",
       });
     },
@@ -470,25 +514,54 @@ export default function AdminPanel() {
                 ) : customers && customers.length > 0 ? (
                   <div className="space-y-4">
                     {customers.map((customer: any) => (
-                      <div key={customer.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="font-semibold">
-                              {customer.firstName && customer.lastName 
-                                ? `${customer.firstName} ${customer.lastName}` 
-                                : customer.username}
-                            </h4>
-                            <p className="text-sm text-muted-foreground">{customer.email}</p>
-                            {customer.phone && (
-                              <p className="text-sm text-muted-foreground">{customer.phone}</p>
-                            )}
-                            <p className="text-xs text-muted-foreground">
-                              Cadastrado em: {new Date(customer.createdAt).toLocaleDateString('pt-AO')}
-                            </p>
+                      <div key={customer.id} className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <h4 className="font-semibold text-lg">
+                                {customer.firstName && customer.lastName 
+                                  ? `${customer.firstName} ${customer.lastName}` 
+                                  : customer.username}
+                              </h4>
+                              <Badge variant={customer.isActive ? 'default' : 'secondary'}>
+                                {customer.isActive ? 'Ativo' : 'Inativo'}
+                              </Badge>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
+                              <div>
+                                <p><span className="font-medium">Email:</span> {customer.email}</p>
+                                <p><span className="font-medium">Username:</span> {customer.username}</p>
+                              </div>
+                              <div>
+                                {customer.phone && (
+                                  <p><span className="font-medium">Telefone:</span> {customer.phone}</p>
+                                )}
+                                <p><span className="font-medium">Cadastrado:</span> {new Date(customer.createdAt).toLocaleDateString('pt-AO')}</p>
+                              </div>
+                            </div>
                           </div>
-                          <Badge variant={customer.isActive ? 'default' : 'secondary'}>
-                            {customer.isActive ? 'Ativo' : 'Inativo'}
-                          </Badge>
+                          <div className="flex items-center gap-2 ml-4">
+                            <select
+                              value={customer.isActive ? 'active' : 'inactive'}
+                              onChange={(e) => updateCustomerMutation.mutate({ 
+                                id: customer.id, 
+                                updates: { isActive: e.target.value === 'active' }
+                              })}
+                              className="text-sm border rounded px-3 py-1 bg-background"
+                              disabled={updateCustomerMutation.isPending}
+                            >
+                              <option value="active">Ativo</option>
+                              <option value="inactive">Inativo</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center pt-2 border-t">
+                          <div className="text-xs text-muted-foreground">
+                            ID: #{customer.id} • Última atualização: {new Date(customer.updatedAt).toLocaleDateString('pt-AO')}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {customer.isActive ? '🟢 Conta Ativa' : '🔴 Conta Inativa'}
+                          </div>
                         </div>
                       </div>
                     ))}
