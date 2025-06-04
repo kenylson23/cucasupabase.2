@@ -54,7 +54,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin routes (protected)
-  app.get("/api/admin/contact-messages", requireAuth, async (req, res) => {
+  app.get("/api/admin/contact-messages", isAuthenticated, async (req, res) => {
     try {
       const messages = await storage.getContactMessages();
       res.json(messages);
@@ -64,7 +64,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/admin/contact-messages/:id", requireAuth, async (req, res) => {
+  app.patch("/api/admin/contact-messages/:id", isAuthenticated, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const updates = req.body;
@@ -77,7 +77,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Product management routes
-  app.get("/api/admin/products", requireAuth, async (req, res) => {
+  app.get("/api/admin/products", isAuthenticated, async (req, res) => {
     try {
       const products = await storage.getProducts();
       res.json(products);
@@ -98,7 +98,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/admin/products", requireAuth, async (req, res) => {
+  app.post("/api/admin/products", isAuthenticated, async (req, res) => {
     try {
       const result = insertProductSchema.safeParse(req.body);
       if (!result.success) {
@@ -116,7 +116,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/admin/products/:id", requireAuth, async (req, res) => {
+  app.patch("/api/admin/products/:id", isAuthenticated, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const updates = req.body;
@@ -128,7 +128,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/admin/products/:id", requireAuth, async (req, res) => {
+  app.delete("/api/admin/products/:id", isAuthenticated, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       await storage.deleteProduct(id);
@@ -140,7 +140,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Customer management routes
-  app.get("/api/admin/customers", requireAuth, async (req, res) => {
+  app.get("/api/admin/customers", isAuthenticated, async (req, res) => {
     try {
       const customers = await storage.getCustomers();
       res.json(customers);
@@ -150,7 +150,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/admin/customers/:id", requireAuth, async (req, res) => {
+  app.patch("/api/admin/customers/:id", isAuthenticated, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const updates = req.body;
@@ -163,7 +163,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Order management routes
-  app.get("/api/admin/orders", requireAuth, async (req, res) => {
+  app.get("/api/admin/orders", isAuthenticated, async (req, res) => {
     try {
       const orders = await storage.getOrders();
       res.json(orders);
@@ -173,7 +173,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/admin/orders/:id/status", requireAuth, async (req, res) => {
+  app.patch("/api/admin/orders/:id/status", isAuthenticated, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const { status } = req.body;
@@ -204,7 +204,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/analytics", requireAuth, async (req, res) => {
+  app.get("/api/admin/analytics", isAuthenticated, async (req, res) => {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 100;
       const events = await storage.getAnalyticsEvents(limit);
@@ -216,7 +216,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Dashboard stats
-  app.get("/api/admin/stats", requireAuth, async (req, res) => {
+  app.get("/api/admin/stats", isAuthenticated, async (req, res) => {
     try {
       const [products, customers, orders, messages] = await Promise.all([
         storage.getProducts(),
@@ -246,7 +246,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Fan Gallery routes
-  app.post("/api/fan-gallery", requireAuth, async (req, res) => {
+  app.post("/api/fan-gallery", isAuthenticated, async (req, res) => {
     try {
       const result = insertFanPhotoSchema.safeParse(req.body);
       if (!result.success) {
@@ -256,7 +256,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const userId = (req.session as any).user?.id;
+      const userId = (req as any).user.claims.sub;
       if (!userId) {
         return res.status(401).json({ message: "Unauthorized" });
       }
@@ -281,7 +281,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin fan gallery routes
-  app.get("/api/admin/fan-gallery", requireAuth, async (req, res) => {
+  app.get("/api/admin/fan-gallery", isAuthenticated, async (req, res) => {
     try {
       const photos = await storage.getFanPhotos();
       res.json(photos);
@@ -291,7 +291,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/fan-gallery/pending", requireAuth, async (req, res) => {
+  app.get("/api/admin/fan-gallery/pending", isAuthenticated, async (req, res) => {
     try {
       const photos = await storage.getPendingFanPhotos();
       res.json(photos);
@@ -301,10 +301,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/admin/fan-gallery/:id/approve", requireAuth, async (req, res) => {
+  app.patch("/api/admin/fan-gallery/:id/approve", isAuthenticated, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const adminUser = (req.session as any).user?.username || "admin";
+      const adminUser = (req as any).user.claims.email || "admin";
       
       const photo = await storage.updateFanPhotoStatus(id, "approved", adminUser);
       res.json({ success: true, message: "Foto aprovada com sucesso!", photo });
@@ -314,10 +314,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/admin/fan-gallery/:id/reject", requireAuth, async (req, res) => {
+  app.patch("/api/admin/fan-gallery/:id/reject", isAuthenticated, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const adminUser = (req.session as any).user?.username || "admin";
+      const adminUser = (req as any).user.claims.email || "admin";
       
       const photo = await storage.updateFanPhotoStatus(id, "rejected", adminUser);
       res.json({ success: true, message: "Foto rejeitada com sucesso!", photo });
@@ -327,7 +327,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/admin/fan-gallery/:id", requireAuth, async (req, res) => {
+  app.delete("/api/admin/fan-gallery/:id", isAuthenticated, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       await storage.deleteFanPhoto(id);
@@ -339,9 +339,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // User photo routes (authenticated)
-  app.get("/api/user/my-photos", requireAuth, async (req, res) => {
+  app.get("/api/user/my-photos", isAuthenticated, async (req, res) => {
     try {
-      const userId = (req.session as any).user?.id;
+      const userId = (req as any).user.claims.sub;
       if (!userId) {
         return res.status(401).json({ message: "Unauthorized" });
       }
