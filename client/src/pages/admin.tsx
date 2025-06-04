@@ -29,8 +29,11 @@ import {
   DollarSign,
   ArrowUpRight,
   Star,
-  Heart
+  Heart,
+  Home,
+  ExternalLink
 } from "lucide-react";
+import cucaLogoPath from "@/assets/cuca-logo.png";
 
 interface AdminStats {
   totalProducts: number;
@@ -144,8 +147,15 @@ export default function AdminPanel() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center space-x-4">
-              <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-3 rounded-xl shadow-lg">
-                <BarChart3 className="h-8 w-8 text-white" />
+              <div className="flex items-center space-x-3">
+                <img 
+                  src={cucaLogoPath} 
+                  alt="CUCA Logo" 
+                  className="h-12 w-12 object-contain"
+                />
+                <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-3 rounded-xl shadow-lg">
+                  <BarChart3 className="h-8 w-8 text-white" />
+                </div>
               </div>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
@@ -155,6 +165,15 @@ export default function AdminPanel() {
               </div>
             </div>
             <div className="flex items-center space-x-3">
+              <Button 
+                variant="ghost" 
+                onClick={() => window.location.href = "/"}
+                className="hover:bg-white/20 flex items-center gap-2"
+              >
+                <Home className="h-4 w-4" />
+                <span className="hidden sm:inline">Voltar ao Site</span>
+                <ExternalLink className="h-3 w-3" />
+              </Button>
               <Button 
                 variant="ghost" 
                 size="icon"
