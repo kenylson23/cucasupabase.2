@@ -195,7 +195,10 @@ export default function AdminPanel() {
               </Button>
               <Button 
                 variant="outline" 
-                onClick={() => window.location.href = "/api/logout"}
+                onClick={() => {
+                  fetch('/api/auth/logout', { method: 'POST' })
+                    .then(() => window.location.href = "/");
+                }}
                 className="bg-white/20 hover:bg-white/30 border-white/30"
               >
                 <LogOut className="h-4 w-4 mr-2" />
