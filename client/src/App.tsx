@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Suspense, lazy } from "react";
 import { useCriticalResourcePreload } from "@/hooks/use-image-preload";
-import { useAuth } from "@/hooks/useAuth";
+import { AuthProvider } from "@/components/AuthProvider";
 
 // Lazy loading dos componentes de página
 const Home = lazy(() => import("@/pages/home"));
@@ -39,8 +39,8 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/pontos-venda" component={PontosVenda} />
         <Route path="/galeria-fas" component={GaleriaFas} />
-        <Route path="/login" component={lazy(() => import("@/pages/login"))} />
-        <Route path="/admin" component={AdminPanel} />
+        <Route path="/login" component={lazy(() => import("@/pages/login-netlify"))} />
+        <Route path="/admin" component={lazy(() => import("@/pages/admin-simple-supabase"))} />
         <Route path="/admin-galeria" component={AdminGaleria} />
         <Route path="/admin/galeria" component={AdminGaleria} />
         <Route path="/dashboard" component={Dashboard} />
@@ -57,10 +57,12 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
