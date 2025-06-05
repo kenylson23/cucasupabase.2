@@ -219,6 +219,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Public stats for demo
+  app.get("/api/stats", async (req, res) => {
+    try {
+      const [products, customers, orders, messages] = await Promise.all([
+        storage.getProducts(),
+        storage.getCustomers(),
+        storage.getOrders(),
+        storage.getContactMessages()
+      ]);
+
+      const stats = {
+        totalUsers: customers.length,
+        activeUsers: customers.filter(c => c.isActive).length,
+        totalProducts: products.length,
+        activeProducts: products.filter(p => p.isActive).length,
+        totalOrders: orders.length,
+        pendingOrders: orders.filter(o => o.status === 'pending').length,
+        unreadMessages: messages.filter(m => m.status === 'unread').length,
+        pendingPhotos: 0, // Will be updated when fan photos are implemented
+        totalRevenue: orders
+          .filter(o => o.paymentStatus === 'paid')
+          .reduce((sum, o) => sum + parseFloat(o.total), 0)
+      };
+
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching public stats:", error);
+      res.status(500).json({ message: "Failed to fetch stats" });
+    }
+  });
+
   // Dashboard stats
   app.get("/api/admin/stats", requireAuth, async (req, res) => {
     try {
