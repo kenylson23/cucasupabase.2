@@ -9,7 +9,7 @@ import {
   productsService, 
   contactService,
   fanPhotosService 
-} from "@/services/supabaseService";
+} from "@/services/databaseService";
 import { 
   Database, 
   Users, 

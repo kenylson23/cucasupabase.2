@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabaseClient'
+import { apiRequest } from '@/lib/queryClient'
 import type {
   User, InsertUser,
   Product, InsertProduct,
@@ -13,24 +13,22 @@ import type {
 // Users Operations
 export const usersService = {
   async getAll(): Promise<User[]> {
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .order('created_at', { ascending: false })
-    
-    if (error) throw new Error(`Erro ao buscar utilizadores: ${error.message}`)
-    return data || []
+    try {
+      const data = await apiRequest('/api/customers');
+      return data || [];
+    } catch (error: any) {
+      throw new Error(`Erro ao buscar utilizadores: ${error.message}`);
+    }
   },
 
   async getById(id: number): Promise<User | null> {
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', id)
-      .single()
-    
-    if (error && error.code !== 'PGRST116') throw new Error(`Erro ao buscar utilizador: ${error.message}`)
-    return data || null
+    try {
+      const data = await apiRequest(`/api/customers/${id}`);
+      return data || null;
+    } catch (error: any) {
+      if (error.message.includes('404')) return null;
+      throw new Error(`Erro ao buscar utilizador: ${error.message}`);
+    }
   },
 
   async create(userData: InsertUser): Promise<User> {

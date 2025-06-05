@@ -134,6 +134,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Customer management routes
+  app.get("/api/customers", async (req, res) => {
+    try {
+      const customers = await storage.getCustomers();
+      res.json(customers);
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+      res.status(500).json({ message: "Failed to fetch customers" });
+    }
+  });
+
   app.get("/api/admin/customers", requireAuth, async (req, res) => {
     try {
       const customers = await storage.getCustomers();
