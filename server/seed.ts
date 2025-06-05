@@ -2,6 +2,11 @@ import { db } from "./db";
 import { products, adminUsers, contactMessages } from "@shared/schema";
 
 export async function seedDatabase() {
+  if (!db) {
+    console.warn('Database not available, skipping seed');
+    return;
+  }
+  
   try {
     // Seed admin users
     await db.insert(adminUsers).values([

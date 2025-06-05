@@ -2,14 +2,25 @@ import { Pool } from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import * as schema from "@shared/schema";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Please provide your Supabase database connection string.",
-  );
+// Para desenvolvimento local, permite funcionar sem banco
+let pool: Pool | null = null;
+let db: any = null;
+
+if (process.env.DATABASE_URL) {
+  try {
+    pool = new Pool({ 
+      connectionString: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: false
+      },
+      connectionTimeoutMillis: 5000,
+    });
+    db = drizzle({ client: pool, schema });
+  } catch (error) {
+    console.warn('Warning: Database connection failed, some features may not work:', error);
+  }
+} else {
+  console.warn('Warning: DATABASE_URL not set, database features disabled');
 }
 
-export const pool = new Pool({ 
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-});
-export const db = drizzle({ client: pool, schema });
+export { pool, db };
