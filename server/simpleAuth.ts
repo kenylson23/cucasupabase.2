@@ -12,18 +12,9 @@ const ADMIN_CREDENTIALS = {
 
 export function getSimpleSession() {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
-  const pgStore = connectPg(session);
-  
-  const sessionStore = new pgStore({
-    conString: process.env.DATABASE_URL,
-    createTableIfMissing: false,
-    ttl: sessionTtl,
-    tableName: "sessions",
-  });
 
   return session({
     secret: process.env.SESSION_SECRET || "cuca-admin-secret-key-2024",
-    store: sessionStore,
     resave: false,
     saveUninitialized: false,
     cookie: {
