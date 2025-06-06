@@ -26,7 +26,7 @@ function AppRouter() {
       <Route path="/" component={Home} />
       <Route path="/galeria-fas" component={GaleriaFas} />
       <Route path="/login-netlify" component={LoginNetlify} />
-      <Route path="/admin" component={AdminNetlify} />
+      <Route path="/admin-netlify" component={AdminNetlify} />
       <Route>
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
