@@ -1,6 +1,14 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
-import type { AuthUser } from '../lib/supabaseAuth'
-import { getCurrentUser, onAuthStateChange } from '../lib/supabaseAuth'
+import { createContext, useContext, ReactNode } from 'react'
+import { useQuery } from '@tanstack/react-query'
+
+interface AuthUser {
+  id: string
+  username: string
+  email: string
+  firstName: string
+  lastName: string
+  role: string
+}
 
 interface AuthContextType {
   user: AuthUser | null
@@ -15,29 +23,20 @@ const AuthContext = createContext<AuthContextType>({
 })
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: user, isLoading } = useQuery<AuthUser>({
+    queryKey: ["/api/auth/user"],
+    retry: false,
+    refetchOnWindowFocus: false,
+  })
 
-  useEffect(() => {
-    // Verificar usuário atual ao carregar
-    getCurrentUser().then((user) => {
-      setUser(user)
-      setLoading(false)
-    })
-
-    // Escutar mudanças de autenticação
-    const { data: { subscription } } = onAuthStateChange((user) => {
-      setUser(user)
-      setLoading(false)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
-
-  const isAdmin = user?.user_metadata?.role === 'admin'
+  const isAdmin = user?.role === 'admin'
 
   return (
-    <AuthContext.Provider value={{ user, loading, isAdmin }}>
+    <AuthContext.Provider value={{ 
+      user: user || null, 
+      loading: isLoading, 
+      isAdmin 
+    }}>
       {children}
     </AuthContext.Provider>
   )
