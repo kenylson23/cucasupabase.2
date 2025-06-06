@@ -7,7 +7,7 @@
 :root {
   --background: 0 0% 100%;
   --foreground: 0 0% 0%;
-  --muted: 0 0% 96%; 
+  --muted: 0 0% 96%;
   --muted-foreground: 0 0% 45%;
   --popover: 0 0% 100%;
   --popover-foreground: 0 0% 0%;
@@ -18,41 +18,61 @@
   --primary: 51 100% 50%;
   --primary-foreground: 0 0% 0%;
   --secondary: 0 0% 96%;
-  --secondary-foreground: 0 0% 9%;
+  --secondary-foreground: 0 0% 10%;
   --accent: 0 0% 96%;
-  --accent-foreground: 0 0% 9%;
+  --accent-foreground: 0 0% 10%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
-  --ring: 0 0% 63%;
+  --ring: 0 0% 3%;
   --radius: 0.5rem;
-  
-  /* CUCA Brand Colors */
-  --cuca-red: 0 75% 55%;
-  --cuca-gold: 51 100% 50%;
-  --cuca-cream: 48 100% 96%;
-  --cuca-dark: 0 0% 15%;
+  --chart-1: 12 76% 61%;
+  --chart-2: 173 58% 39%;
+  --chart-3: 197 37% 24%;
+  --chart-4: 43 74% 66%;
+  --chart-5: 27 87% 67%;
+  --sidebar-background: 0 0% 98%;
+  --sidebar-foreground: 0 0% 3%;
+  --sidebar-primary: 0 0% 9%;
+  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-accent: 0 0% 93%;
+  --sidebar-accent-foreground: 0 0% 9%;
+  --sidebar-border: 0 0% 87%;
+  --sidebar-ring: 0 0% 3%;
 }
 
 .dark {
-  --background: 0 0% 3.9%;
+  --background: 0 0% 3%;
   --foreground: 0 0% 98%;
-  --muted: 0 0% 14.9%;
-  --muted-foreground: 0 0% 63.9%;
-  --popover: 0 0% 3.9%;
+  --muted: 0 0% 8%;
+  --muted-foreground: 0 0% 63%;
+  --popover: 0 0% 3%;
   --popover-foreground: 0 0% 98%;
-  --card: 0 0% 3.9%;
+  --card: 0 0% 3%;
   --card-foreground: 0 0% 98%;
-  --border: 0 0% 14.9%;
-  --input: 0 0% 14.9%;
+  --border: 0 0% 15%;
+  --input: 0 0% 15%;
   --primary: 51 100% 50%;
   --primary-foreground: 0 0% 0%;
-  --secondary: 0 0% 14.9%;
+  --secondary: 0 0% 8%;
   --secondary-foreground: 0 0% 98%;
-  --accent: 0 0% 14.9%;
+  --accent: 0 0% 8%;
   --accent-foreground: 0 0% 98%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 85.7% 97.3%;
-  --ring: 0 0% 83.1%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 0 0% 83%;
+  --chart-1: 220 70% 50%;
+  --chart-2: 160 60% 45%;
+  --chart-3: 30 80% 55%;
+  --chart-4: 280 65% 60%;
+  --chart-5: 340 75% 55%;
+  --sidebar-background: 0 0% 2%;
+  --sidebar-foreground: 0 0% 98%;
+  --sidebar-primary: 0 0% 98%;
+  --sidebar-primary-foreground: 0 0% 2%;
+  --sidebar-accent: 0 0% 8%;
+  --sidebar-accent-foreground: 0 0% 98%;
+  --sidebar-border: 0 0% 15%;
+  --sidebar-ring: 0 0% 83%;
 }
 
 * {
@@ -62,58 +82,52 @@
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
-  font-family: 'Open Sans', sans-serif;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Montserrat', sans-serif;
-}
-
-/* CUCA specific styles */
-.text-cuca-red {
-  color: hsl(var(--cuca-red));
-}
-
-.bg-cuca-red {
-  background-color: hsl(var(--cuca-red));
-}
-
+/* Custom CUCA Brand Colors */
 .text-cuca-gold {
-  color: hsl(var(--cuca-gold));
+  color: #FFD700;
 }
 
 .bg-cuca-gold {
-  background-color: hsl(var(--cuca-gold));
+  background-color: #FFD700;
 }
 
-.text-cuca-cream {
-  color: hsl(var(--cuca-cream));
+.text-cuca-red {
+  color: #D2001C;
 }
 
-.bg-cuca-cream {
-  background-color: hsl(var(--cuca-cream));
+.bg-cuca-red {
+  background-color: #D2001C;
 }
 
-.text-cuca-dark {
-  color: hsl(var(--cuca-dark));
+.text-cuca-black {
+  color: #1A1A1A;
 }
 
-.bg-cuca-dark {
-  background-color: hsl(var(--cuca-dark));
+.bg-cuca-black {
+  background-color: #1A1A1A;
 }
 
-.border-cuca-red {
-  border-color: hsl(var(--cuca-red));
+/* Scroll behavior */
+html {
+  scroll-behavior: smooth;
 }
 
-.border-cuca-gold {
-  border-color: hsl(var(--cuca-gold));
+/* Remove scrollbar but keep scrolling */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-.hover\:bg-cuca-red:hover {
-  background-color: hsl(var(--cuca-red));
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.hover\:bg-cuca-gold:hover {
-  background-color: hsl(var(--cuca-gold));
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 215, 0, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 215, 0, 0.5);
 }
