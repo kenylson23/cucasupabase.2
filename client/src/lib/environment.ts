@@ -15,6 +15,14 @@ export const config = {
   }
 }
 
+// Authentication system detection
+export function getAuthSystem(): 'supabase' | 'local' {
+  if (isNetlify && config.supabase.url && config.supabase.anonKey) {
+    return 'supabase'
+  }
+  return 'local'
+}
+
 // Validation
 if (isNetlify && (!config.supabase.url || !config.supabase.anonKey)) {
   console.warn('Supabase credentials not configured. Some features may not work.')
