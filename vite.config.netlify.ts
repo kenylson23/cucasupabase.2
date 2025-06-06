@@ -17,7 +17,7 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: path.resolve(__dirname, "client", "index.html")
+        main: path.resolve(__dirname, "client", "index-netlify.html")
       }
     }
   },

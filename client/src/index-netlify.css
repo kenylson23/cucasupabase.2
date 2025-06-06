@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&family=Open+Sans:wght@300;400;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 0%;
+  --muted: 0 0% 96%; 
+  --muted-foreground: 0 0% 45%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 0%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 0%;
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
+  --primary: 51 100% 50%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 0 0% 96%;
+  --secondary-foreground: 0 0% 9%;
+  --accent: 0 0% 96%;
+  --accent-foreground: 0 0% 9%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 0 0% 63%;
+  --radius: 0.5rem;
+  
+  /* CUCA Brand Colors */
+  --cuca-red: 0 75% 55%;
+  --cuca-gold: 51 100% 50%;
+  --cuca-cream: 48 100% 96%;
+  --cuca-dark: 0 0% 15%;
+}
+
+.dark {
+  --background: 0 0% 3.9%;
+  --foreground: 0 0% 98%;
+  --muted: 0 0% 14.9%;
+  --muted-foreground: 0 0% 63.9%;
+  --popover: 0 0% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --card: 0 0% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --border: 0 0% 14.9%;
+  --input: 0 0% 14.9%;
+  --primary: 51 100% 50%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 0 0% 14.9%;
+  --secondary-foreground: 0 0% 98%;
+  --accent: 0 0% 14.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 85.7% 97.3%;
+  --ring: 0 0% 83.1%;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: 'Open Sans', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* CUCA specific styles */
+.text-cuca-red {
+  color: hsl(var(--cuca-red));
+}
+
+.bg-cuca-red {
+  background-color: hsl(var(--cuca-red));
+}
+
+.text-cuca-gold {
+  color: hsl(var(--cuca-gold));
+}
+
+.bg-cuca-gold {
+  background-color: hsl(var(--cuca-gold));
+}
+
+.text-cuca-cream {
+  color: hsl(var(--cuca-cream));
+}
+
+.bg-cuca-cream {
+  background-color: hsl(var(--cuca-cream));
+}
+
+.text-cuca-dark {
+  color: hsl(var(--cuca-dark));
+}
+
+.bg-cuca-dark {
+  background-color: hsl(var(--cuca-dark));
+}
+
+.border-cuca-red {
+  border-color: hsl(var(--cuca-red));
+}
+
+.border-cuca-gold {
+  border-color: hsl(var(--cuca-gold));
+}
+
+.hover\:bg-cuca-red:hover {
+  background-color: hsl(var(--cuca-red));
+}
+
+.hover\:bg-cuca-gold:hover {
+  background-color: hsl(var(--cuca-gold));
+}
