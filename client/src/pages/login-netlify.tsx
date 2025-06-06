@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useLocation } from 'wouter'
 import { loginAdmin, createAdminUser } from '../lib/netlifyAuth'
-import { useAuth } from '../components/AuthProvider'
+import { useAuth } from '../components/NetlifyAuthProvider'
 
 export default function LoginNetlify() {
   const [, setLocation] = useLocation()

@@ -1,6 +1,6 @@
 import { Route, Switch } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider } from "./components/AuthProvider";
+import { NetlifyAuthProvider } from "./components/NetlifyAuthProvider";
 import Home from "./pages/home";
 import GaleriaFas from "./pages/galeria-fas";
 import LoginNetlify from "./pages/login-netlify";
@@ -52,9 +52,9 @@ function AppRouter() {
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
+      <NetlifyAuthProvider>
         <AppRouter />
-      </AuthProvider>
+      </NetlifyAuthProvider>
     </QueryClientProvider>
   );
 }

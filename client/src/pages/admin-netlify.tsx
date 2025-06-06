@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'wouter'
-import { useAuth } from '../components/AuthProvider'
-import { signOut } from '../lib/supabaseAuth'
+import { useAuth } from '../components/NetlifyAuthProvider'
+import { logoutAdmin } from '../lib/netlifyAuth'
 import { supabase } from '../lib/supabase'
 
 interface AdminStats {
@@ -61,7 +61,7 @@ export default function AdminNetlify() {
 
   const handleLogout = async () => {
     try {
-      await signOut()
+      await logoutAdmin()
       setLocation('/')
     } catch (error) {
       console.error('Erro ao fazer logout:', error)
