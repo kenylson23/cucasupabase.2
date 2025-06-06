@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { useLocation } from 'wouter'
-import { signInAdmin } from '../lib/supabaseAuth'
+import { loginAdmin, createAdminUser } from '../lib/netlifyAuth'
 import { useAuth } from '../components/AuthProvider'
 
 export default function LoginNetlify() {
   const [, setLocation] = useLocation()
   const { user, isAdmin } = useAuth()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('admin@cuca.ao')
+  const [password, setPassword] = useState('cuca2024admin')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -23,8 +23,23 @@ export default function LoginNetlify() {
     setError('')
 
     try {
-      await signInAdmin(email, password)
-      setLocation('/admin')
+      // Primeiro tenta fazer login
+      try {
+        await loginAdmin(email, password)
+        setLocation('/admin')
+        return
+      } catch (loginError: any) {
+        // Se falhar, tenta criar o usuário admin
+        if (loginError.message?.includes('Invalid login credentials')) {
+          console.log('Tentando criar usuário admin...')
+          await createAdminUser()
+          // Tenta login novamente após criar
+          await loginAdmin(email, password)
+          setLocation('/admin')
+          return
+        }
+        throw loginError
+      }
     } catch (err: any) {
       setError(err.message || 'Erro ao fazer login')
     } finally {
