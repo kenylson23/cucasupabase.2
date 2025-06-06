@@ -1,0 +1,16 @@
+{
+  "name": "CUCA - A Melhor de Angola",
+  "short_name": "CUCA",
+  "description": "Cerveja CUCA - 73 anos de tradição e qualidade em Angola",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#FFD700",
+  "icons": [
+    {
+      "src": "/images/cuca-logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
