@@ -36,14 +36,25 @@ export default function LoginPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(credentials),
+        credentials: "include",
       });
       
+      const contentType = response.headers.get("content-type");
+      
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Erro no login");
+        if (contentType && contentType.includes("application/json")) {
+          const error = await response.json();
+          throw new Error(error.message || "Erro no login");
+        } else {
+          throw new Error(`Erro ${response.status}: ${response.statusText}`);
+        }
       }
       
-      return response.json();
+      if (contentType && contentType.includes("application/json")) {
+        return response.json();
+      } else {
+        throw new Error("Resposta inválida do servidor");
+      }
     },
     onSuccess: (data) => {
       toast({
@@ -78,14 +89,25 @@ export default function LoginPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(userData),
+        credentials: "include",
       });
       
+      const contentType = response.headers.get("content-type");
+      
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Erro no cadastro");
+        if (contentType && contentType.includes("application/json")) {
+          const error = await response.json();
+          throw new Error(error.message || "Erro no cadastro");
+        } else {
+          throw new Error(`Erro ${response.status}: ${response.statusText}`);
+        }
       }
       
-      return response.json();
+      if (contentType && contentType.includes("application/json")) {
+        return response.json();
+      } else {
+        throw new Error("Resposta inválida do servidor");
+      }
     },
     onSuccess: (data) => {
       toast({
