@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Suspense, lazy } from "react";
 import { useCriticalResourcePreload } from "@/hooks/use-image-preload";
-import { AuthProvider } from "@/components/AuthProvider";
+import { UnifiedAuthProvider } from "@/components/UnifiedAuthProvider";
 
 // Lazy loading dos componentes de página
 const Home = lazy(() => import("@/pages/home"));
@@ -57,12 +57,12 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
+      <UnifiedAuthProvider>
         <TooltipProvider>
           <Toaster />
           <Router />
         </TooltipProvider>
-      </AuthProvider>
+      </UnifiedAuthProvider>
     </QueryClientProvider>
   );
 }

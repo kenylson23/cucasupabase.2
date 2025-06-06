@@ -1,25 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-
-interface AuthUser {
-  id: string
-  username: string
-  email: string
-  firstName: string
-  lastName: string
-  role: string
-}
+import { useAuth as useUnifiedAuth } from '@/components/UnifiedAuthProvider'
 
 export function useAuth() {
-  const { data: user, isLoading } = useQuery<AuthUser>({
-    queryKey: ["/api/auth/user"],
-    retry: false,
-    refetchOnWindowFocus: false,
-  });
-
+  const auth = useUnifiedAuth()
   return {
-    user,
-    isLoading,
-    isAuthenticated: !!user,
-    isAdmin: user?.role === 'admin'
-  };
+    ...auth,
+    isAuthenticated: !!auth.user,
+  }
 }
